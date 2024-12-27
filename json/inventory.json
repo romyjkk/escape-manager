@@ -1,0 +1,39 @@
+[
+    {
+        "roomName": "cabin_666",
+        "locks": [
+            {
+                "id": "126",
+                "count": 3
+            },
+            {
+                "id": "684",
+                "count": 2
+            },
+            {
+                "id": "973",
+                "count": 2
+            },
+            {
+                "id": "312",
+                "count": 2
+            },
+            {
+                "id": "211",
+                "count": 3
+            },
+            {
+                "id": "LOST",
+                "count": 2
+            },
+            {
+                "id": "TIEN",
+                "count": 2
+            },
+            {
+                "id": "NINE",
+                "count": 2
+            }
+        ]
+    }
+]
