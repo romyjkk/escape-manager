@@ -1,0 +1,41 @@
+[
+    {
+        "id": "id-1",
+        "title": "Pusher Space",
+        "description": "Pusher vliegt steeds los.",
+        "category": [
+            {
+                "room": "Space Hunter"
+            }
+        ],
+        "priority": "low",
+        "assigned": "Peter",
+        "creator": "Peter",
+        "date": "01/05/2025 13:54",
+        "status": "in progress"
+    },
+    {
+        "id": "id-2",
+        "title": "Tasks autotick maken",
+        "description": "Taken in de kamers die nog niet gedaan zijn autotick maken.",
+        "category": [
+            {
+                "room": "Space Hunter"
+            },
+            {
+                "room": "The Wizard School"
+            },
+            {
+                "room": "Cabin 666"
+            },
+            {
+                "room": "Infinicorp Laboratory"
+            }
+        ],
+        "priority": "low",
+        "assigned": "Kevin",
+        "creator": "Peter",
+        "date": "01/05/2025 13:54",
+        "status": "in progress"
+    }
+]

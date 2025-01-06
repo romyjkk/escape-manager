@@ -2,6 +2,30 @@ from flask import Flask, render_template, jsonify
 import json
 app = Flask(__name__)
 
+@app.route('/issues')
+def issues():
+    return render_template('issues.html')
+@app.route('/get_issues')
+def get_issues():
+    try:
+        with open('json/issues.json') as file:
+            issues = json.load(file)
+            print (issues)
+            return jsonify(issues)
+    # if you dont do this and the file doesn't exist, everything crashes
+    except FileNotFoundError:
+        return "Issues file not found", 404
+
+@app.route('/get_room_config')
+def get_room_config():
+    try:
+        with open('json/config.json') as file:
+            room_config = json.load(file)
+            print (room_config)
+            return jsonify(room_config)
+    except FileNotFoundError:
+        return "Room config file not found", 404
+
 @app.route('/inventory')
 #def is a function
 def inventory():

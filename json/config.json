@@ -1,0 +1,25 @@
+[
+    {
+        "availableRooms": [
+            {
+                "room": "Cabin 666"
+            },
+            {
+                "room": "Infinicorp Laboratory"
+            },
+            {
+                "room": "Theft at the Morgue"
+            },
+            {
+                "room": "The Wizard School"
+            },
+            {
+                "room": "The Exorcist"
+            },
+            {
+                "room": "Space Hunter"
+            }
+        ]
+
+    }
+]

@@ -3,19 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Prototype</title>
+    <title>Meldingen</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
-    <h1>Dashboard</h1>
-    
-    <div>
-        <a href="/issues">Issues</a>
-        <a href="/inventory">Inventory</a>
-    </div>
+    <h1>Issues</h1>
 
+    <section id="rooms">
+    </section>
 </body>
-
-
-    <script src="{{ url_for('static', filename='js/index.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/issues.js') }}"></script>
 </html>
