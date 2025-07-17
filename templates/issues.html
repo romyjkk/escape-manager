@@ -3,24 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Meldingen</title>
+    <title>Escape manager</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
     <!-- header -->
     <main>
-        <h1>Issues</h1>
+        <h1 id="roomTitle"></h1>
 
-        <section id="issueCards">
-        </section>
+        <!-- actief & archief -->
+        <!-- sorteren & filtreren -->
+        <!-- filters -->
+
+        <ul id="issueCards">
+        </ul>
 
     </main>
     <!-- footer -->
 </body>
-<script>
-    const roomIdCheck = "{{ room_id }}";
-    // Now you can use issueId in your JavaScript
-    console.log("Current issue ID:", roomIdCheck);
-</script>
+    <script>
+        const roomIdCheck = "{{ room_id }}";
+    </script>
     <script src="{{ url_for('static', filename='js/issues.js') }}"></script>
 </html>

@@ -3,9 +3,13 @@
         "id": "id-1",
         "title": "Pusher Space",
         "description": "Pusher vliegt steeds los.",
+        "image": "../static/img/placeholder.svg",
         "category": [
             {
                 "room": "Space Hunter"
+            },
+            {
+                "room": "Infinicorp Laboratory"
             }
         ],
         "priority": "low",
@@ -18,6 +22,7 @@
         "id": "id-2",
         "title": "Tasks autotick maken",
         "description": "Taken in de kamers die nog niet gedaan zijn autotick maken.",
+        "image": "../static/img/placeholder.svg",
         "category": [
             {
                 "room": "Space Hunter"

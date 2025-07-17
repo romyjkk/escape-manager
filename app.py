@@ -55,6 +55,16 @@ def get_inventory():
     except FileNotFoundError:
         return "Inventory file not found", 404
 
+@app.route('/get_user_config')
+def get_user_config():
+    try:
+        with open('json/userConfig.json') as file:
+            user_config = json.load(file)
+            print(user_config)
+            return jsonify(user_config)
+    except FileNotFoundError:
+        return "User config file not found", 404
+
 # standard route, calls HTML page
 @app.route('/')
 def home():
