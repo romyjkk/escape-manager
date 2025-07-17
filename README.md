@@ -12,3 +12,5 @@ Some information about the technical aspect of this project:
 * Data will be stored in JSON.
 
 I'm very excited to see how this project will go, on this Github page I'll make sure to update as often as I can.
+
+TEST
