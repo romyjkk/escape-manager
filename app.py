@@ -2,9 +2,17 @@ from flask import Flask, render_template, jsonify
 import json
 app = Flask(__name__)
 
-@app.route('/issues')
-def issues():
-    return render_template('issues.html')
+# issues home page, user can pick a room
+@app.route('/issues_home')
+def issues_home():
+    return render_template('issuesHome.html')
+
+# issue page, user can see issues for a specific room
+@app.route('/issues/<issue_id>')
+def issues(issue_id):
+    return render_template('issues.html', issue_id=issue_id)
+
+# load issues
 @app.route('/get_issues')
 def get_issues():
     try:
@@ -16,6 +24,7 @@ def get_issues():
     except FileNotFoundError:
         return "Issues file not found", 404
 
+# get data from json
 @app.route('/get_room_config')
 def get_room_config():
     try:
@@ -26,6 +35,7 @@ def get_room_config():
     except FileNotFoundError:
         return "Room config file not found", 404
 
+# inventory page
 @app.route('/inventory')
 #def is a function
 def inventory():

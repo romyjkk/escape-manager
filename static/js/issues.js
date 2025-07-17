@@ -17,7 +17,7 @@ $(document).ready(function () {
 
   // Dynamically display rooms
   function displayRooms(roomConfigData) {
-    let roomList = document.getElementById("rooms");
+    let roomList = document.getElementById("issueCards");
 
     // Access the availableRooms array
     let availableRooms = roomConfigData[0].availableRooms;
