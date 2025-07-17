@@ -1,46 +1,5 @@
 $(document).ready(function () {
-  fetchRoomConfig();
-
-  // Fetch room configuration
-  function fetchRoomConfig() {
-    $.ajax({
-      type: "GET",
-      url: "/get_room_config",
-      success: function (roomConfigData) {
-        displayRooms(roomConfigData);
-      },
-      error: function (error) {
-        console.log("Error fetching room config data:", error);
-      },
-    });
-  }
-
-  // Dynamically display rooms
-  function displayRooms(roomConfigData) {
-    let roomList = document.getElementById("issueCards");
-
-    // Access the availableRooms array
-    let availableRooms = roomConfigData[0].availableRooms;
-
-    availableRooms.forEach((room) => {
-      let roomSection = document.createElement("section");
-      roomSection.id = `${room.room.replace(/\s+/g, "-").toLowerCase()}`; // Convert room name to ID-safe string
-
-      let roomHeader = document.createElement("h2");
-      roomHeader.textContent = room.room; // Room name
-      roomSection.appendChild(roomHeader);
-
-      let issueList = document.createElement("ul");
-      issueList.id = `issueList-${room.room
-        .replace(/\s+/g, "-")
-        .toLowerCase()}`;
-      roomSection.appendChild(issueList);
-
-      roomList.appendChild(roomSection);
-    });
-
-    fetchIssueData(); // Fetch issues after rooms are created
-  }
+  fetchIssueData(); // Fetch issues after rooms are created
 
   // Fetch issue data
   function fetchIssueData() {
@@ -58,22 +17,18 @@ $(document).ready(function () {
 
   // Dynamically display issues
   function displayIssues(issueData) {
+    let issueList = document.getElementById("issueCards");
     issueData.forEach((issue) => {
       issue.category.forEach((category) => {
-        // Generate the ID-safe string for the room
-        let roomId = `issueList-${category.room
-          .replace(/\s+/g, "-")
-          .toLowerCase()}`;
-        let issueList = document.getElementById(roomId);
-
-        if (issueList) {
+        category.room = `${category.room.replace(/\s+/g, "-").toLowerCase()}`;
           // Create and append the issue item
+          if (roomIdCheck !== category.room) {
+            console.log("Room ID does not match:", roomIdCheck, category.room);
+            return; // Skip if the room ID does not match
+          }
           let issueItem = document.createElement("li");
           issueItem.textContent = `${issue.title} - ${issue.status}`;
           issueList.appendChild(issueItem);
-        } else {
-          console.warn(`Room not found for issue: ${category.room}`);
-        }
       });
     });
   }

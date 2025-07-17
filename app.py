@@ -8,9 +8,9 @@ def issues_home():
     return render_template('issuesHome.html')
 
 # issue page, user can see issues for a specific room
-@app.route('/issues/<issue_id>')
-def issues(issue_id):
-    return render_template('issues.html', issue_id=issue_id)
+@app.route('/issues/<room_id>')
+def issues(room_id):
+    return render_template('issues.html', room_id=room_id)
 
 # load issues
 @app.route('/get_issues')

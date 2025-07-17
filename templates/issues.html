@@ -17,5 +17,10 @@
     </main>
     <!-- footer -->
 </body>
+<script>
+    const roomIdCheck = "{{ room_id }}";
+    // Now you can use issueId in your JavaScript
+    console.log("Current issue ID:", roomIdCheck);
+</script>
     <script src="{{ url_for('static', filename='js/issues.js') }}"></script>
 </html>
