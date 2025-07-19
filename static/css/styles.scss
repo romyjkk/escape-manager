@@ -1,3 +1,26 @@
-body {
-  // background-color: salmon;
-}
+@use "abstracts/variables";
+@use "abstracts/classes";
+
+@use "base/reset";
+@use "base/typography";
+
+@use "components/buttons";
+@use "components/header";
+@use "components/footer";
+
+// abstracts : This folder contains all the sass helpers you can create for your project.
+// We create variables, functions and mixins etc. in it.
+
+// base : This folder contains code for reset and typography.
+//_reset.scss is responsible to reset CSS styles. eg. text decoration
+// for a tag and list style for ul or ol.
+
+// components : This folder contains some re-useable UI components like
+// we need buttons on almost every page and also in the header and footer.
+// So we create files like buttons, cards, carousels, forms and modals etc.
+
+// layout : This folder contains all styles necessary for the layout of the site,
+// eg. header, footer, sidebar.
+
+// pages : This folder contains styles for individual pages, like the about page,
+// contact page, auth page etc.

@@ -1,3 +1,5 @@
+import { Navigation } from "index.js";
+
 $(document).ready(function () {
   fetchRoomConfig();
   function fetchRoomConfig() {

@@ -3,7 +3,7 @@
         "id": "user-1",
         "name": "Peter",
         "email": "peterb@gmail.com",
-        "avatar": "../static/img/peter.png",
+        "avatar": "../static/img/users/peter.png",
         "role": "manager",
         "joinDate": "01/01/2025"
     },
@@ -11,7 +11,7 @@
         "id": "user-2",
         "name": "Anna R",
         "email": "annar@gmail.com",
-        "avatar": "../static/img/annar.png",
+        "avatar": "../static/img/users/annar.png",
         "role": "manager",
         "joinDate": "01/01/2025"
     },
@@ -19,7 +19,7 @@
         "id": "user-3",
         "name": "Kevin",
         "email": "k.v.baar@gmail.com",
-        "avatar": "../static/img/kevin.png",
+        "avatar": "../static/img/users/kevin.png",
         "role": "host",
         "joinDate": "01/01/2025"
     },
@@ -27,7 +27,7 @@
         "id": "user-4",
         "name": "Romy",
         "email": "romyjongkees02@gmail.com",
-        "avatar": "../static/img/romy.png",
+        "avatar": "../static/img/users/romy.png",
         "role": "host",
         "joinDate": "01/01/2025"
     }

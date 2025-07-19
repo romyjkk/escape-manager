@@ -3,27 +3,27 @@
         "availableRooms": [
             {
                 "room": "Cabin 666",
-                "image": "./static/img/cabin.webp"
+                "image": "./static/img/rooms/cabin.webp"
             },
             {
                 "room": "Infinicorp Laboratory",
-                "image": "./static/img/lab.webp"
+                "image": "./static/img/rooms/lab.webp"
             },
             {
                 "room": "Theft at the Morgue",
-                "image": "./static/img/morgue.webp"
+                "image": "./static/img/rooms/morgue.webp"
             },
             {
                 "room": "The Wizard School",
-                "image": "./static/img/wiz.webp"
+                "image": "./static/img/rooms/wiz.webp"
             },
             {
                 "room": "The Exorcist",
-                "image": "./static/img/exorcist.webp"
+                "image": "./static/img/rooms/exorcist.webp"
             },
             {
                 "room": "Space Hunter",
-                "image": "./static/img/space.webp"
+                "image": "./static/img/rooms/space.webp"
             }
         ]
 

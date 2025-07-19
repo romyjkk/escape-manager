@@ -19,6 +19,26 @@
         <!-- the rest -->
     </section>
 
+        <footer>
+        <button id="createIssue">
+            <img src="../static/img/icons/plus.svg">
+        </button>
+        <nav>
+            <a id="inventory" href="inventory_home">
+                    <img id="inventoryImg" src="../static/img/icons/inventoryHollow.svg">
+            </a>
+            <a id="home" href="/">
+                <img id="homeImg" src="../static/img/icons/homeHollow.svg">
+            </a>
+            <a id="issues" href="issues_home">
+                <img id="issuesImg" src="../static/img/icons/issuesHollow.svg">
+            </a>
+            <a id="profile" href="profile">
+                <img id="profileImg" src="../static/img/icons/accountHollow.svg">
+            </a>
+        </nav>
+    </footer>
+
     <script src="{{ url_for('static', filename='js/issuesHome.js') }}"></script>
 </body>
 </html>

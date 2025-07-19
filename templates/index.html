@@ -6,15 +6,45 @@
     <title>Prototype</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link rel="stylesheet" href="../static/css/styles.css">
+    <link rel="stylesheet" href="../static/fonts/fonts.css">
 </head>
 <body>
-    <h1>Dashboard</h1>
+    <header>
+        <ul>
+            <li>
+                <h1>Dashboard</h1>
+            </li>
+            <li>
+                <button id="activityButton">
+                    <img src="../static/img/icons/activityBell.svg">
+                </button>
+            </li>
+        </ul>
+    </header>
     
-    <div>
-        <a href="/issues">Issues</a>
-        <a href="/inventory">Inventory</a>
-    </div>
+    <main>
+        <h2>Main content bitch</h2>
+    </main>
 
+    <footer>
+        <button id="createIssue">
+            <img src="../static/img/icons/plus.svg">
+        </button>
+        <nav>
+            <a id="inventory" href="inventory_home">
+                    <img id="inventoryImg" src="../static/img/icons/inventoryHollow.svg">
+            </a>
+            <a id="home" href="/">
+                <img id="homeImg" src="../static/img/icons/homeHollow.svg">
+            </a>
+            <a id="issues" href="issues_home">
+                <img id="issuesImg" src="../static/img/icons/issuesHollow.svg">
+            </a>
+            <a id="profile" href="profile">
+                <img id="profileImg" src="../static/img/icons/accountHollow.svg">
+            </a>
+        </nav>
+    </footer>
 </body>
 
 
