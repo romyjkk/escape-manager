@@ -1,0 +1,56 @@
+<!-- every html page will extend this page -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Escape Manager</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="../static/css/styles.css">
+    <link rel="stylesheet" href="../static/fonts/fonts.css">
+</head>
+<body>
+
+    <header>
+        <ul>
+            <li>
+                <h1>Dashboard</h1>
+            </li>
+            <li>
+                <button id="activityButton">
+                    <img src="../static/img/icons/activityBell.svg">
+                </button>
+            </li>
+        </ul>
+    </header>
+
+    {% block content %}{% endblock %}
+
+    <footer>
+        <button id="createIssue">
+            <img src="../static/img/icons/plus.svg">
+        </button>
+        <nav>
+            <a id="inventory" href="inventory_home">
+                    <img id="inventoryImg" src="../static/img/icons/inventoryHollow.svg">
+            </a>
+            <a id="home" href="/">
+                <img id="homeImgMaskLeft" src="../static/img/navMaskLeft.svg">
+                <img id="homeImg" src="../static/img/icons/homeHollow.svg">
+            </a>
+            <a id="issues" href="issues">
+                <img id="homeImgMaskRight" src="../static/img/navMaskRight.svg">
+                <img id="issuesImg" src="../static/img/icons/issuesHollow.svg">
+            </a>
+            <a id="profile" href="profile">
+                <img id="profileImg" src="../static/img/icons/accountHollow.svg">
+            </a>
+        </nav>
+    </footer>
+
+    {% block scripts %}{% endblock %}
+
+    <script src="{{ url_for('static', filename='js/template.js') }}"></script>
+</body>
+</html>

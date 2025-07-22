@@ -2,15 +2,15 @@ from flask import Flask, render_template, jsonify
 import json
 app = Flask(__name__)
 
-# issues home page, user can pick a room
-@app.route('/issues_home')
-def issues_home():
-    return render_template('issuesHome.html')
-
 # issue page, user can see issues for a specific room
+@app.route('/issues', defaults={'room_id': None})
 @app.route('/issues/<room_id>')
 def issues(room_id):
-    return render_template('issues.html', room_id=room_id)
+    if (room_id):
+        return render_template('issues.html', room_id=room_id)
+    else:
+        return render_template('issuesHome.html')
+
 
 # load issues
 @app.route('/get_issues')

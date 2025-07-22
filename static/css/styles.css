@@ -70,7 +70,13 @@ h1 {
   font-weight: 500;
 }
 
+button {
+  cursor: pointer;
+}
+
 #createIssue {
+  position: absolute;
+  bottom: 3.2rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -78,6 +84,7 @@ h1 {
   width: 4rem;
   height: 4rem;
   border-radius: 3rem;
+  z-index: 1;
 }
 
 header {
@@ -121,7 +128,7 @@ footer nav {
   width: 100%;
 }
 footer nav a {
-  background-color: var(--secundaryBackgroundColor500);
+  background-color: var(--tertiaryBackgroundColor);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -132,10 +139,20 @@ footer nav a:first-of-type {
   border-radius: 2rem 0 0 0;
 }
 footer nav a:nth-of-type(2) {
-  border-radius: 0 2rem 0 0;
+  position: relative;
+}
+footer nav a:nth-of-type(2) #homeImgMaskLeft {
+  position: absolute;
+  top: 0;
+  right: 0;
 }
 footer nav a:nth-of-type(3) {
-  border-radius: 2rem 0 0 0;
+  position: relative;
+}
+footer nav a:nth-of-type(3) #homeImgMaskRight {
+  position: absolute;
+  top: 0;
+  left: 0;
 }
 footer nav a:last-of-type {
   border-radius: 0 2rem 0 0;
