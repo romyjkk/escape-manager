@@ -18,6 +18,7 @@ $(document).ready(function () {
     availableRooms.forEach((element) => {
       console.log(element);
 
+      let roomConfigListItem = document.createElement("li");
       let roomConfigSection = document.createElement("a");
       roomConfigSection.href = `issues/${element.room
         .replace(/\s+/g, "-")
@@ -30,11 +31,15 @@ $(document).ready(function () {
         .replace(/\s+/g, "-")
         .toLowerCase()}`;
 
+      roomConfigList.appendChild(roomConfigListItem);
+      roomConfigListItem.appendChild(roomConfigSection);
       roomConfigSection.appendChild(roomConfigImage);
-      roomConfigList.appendChild(roomConfigSection);
-      let roomConfigHeader = document.createElement("h2");
+
+      let roomConfigHeaderContainer = document.createElement("div");
+      let roomConfigHeader = document.createElement("p");
       roomConfigHeader.textContent = element.room;
-      roomConfigSection.appendChild(roomConfigHeader);
+      roomConfigHeaderContainer.appendChild(roomConfigHeader);
+      roomConfigSection.appendChild(roomConfigHeaderContainer);
     });
   }
 });

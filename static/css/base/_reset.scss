@@ -13,6 +13,12 @@ html {
 
 body {
   background-color: var(--primaryBackgroundColor);
+  overflow-x: hidden;
+}
+
+main {
+  margin-top: 5.4rem;
+  padding: 0 2rem;
 }
 
 li {

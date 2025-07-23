@@ -1,16 +1,24 @@
 {% extends "template.html" %}
 
-{% block content %}
-    <h1>Meldingen</h1>
+{% block pageTitle %}
+    Meldingen
+{% endblock %}
 
-    <section id="roomList">
-        <a href="issues/all-issues" id="roomConfigSection-all-rooms">
-            <img src="../static/img/ruby.svg">
-            <h2>Alle meldingen</h2>
-        </a>
+{% block content %}
+<main>
+    <ul id="roomList">
+        <li>
+            <a href="issues/all-issues" id="roomConfigSection-all-rooms">
+                <img src="../static/img/ruby.png">
+                <div>
+                    <p>Alle meldingen</p>
+                </div>
+            </a>
+        </li>
 
         <!-- the rest -->
-    </section>
+    </ul>
+    </main>
 {% endblock %}
 
 {% block scripts %}

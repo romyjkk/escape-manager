@@ -15,7 +15,7 @@
     <header>
         <ul>
             <li>
-                <h1>Dashboard</h1>
+                <h1>{% block pageTitle %}{% endblock %}</h1>
             </li>
             <li>
                 <button id="activityButton">
@@ -25,7 +25,8 @@
         </ul>
     </header>
 
-    {% block content %}{% endblock %}
+    {% block content %}
+    {% endblock %}
 
     <footer>
         <button id="createIssue">
@@ -33,13 +34,13 @@
         </button>
         <nav>
             <a id="inventory" href="inventory_home">
-                    <img id="inventoryImg" src="../static/img/icons/inventoryHollow.svg">
+                <img id="inventoryImg" src="../static/img/icons/inventoryHollow.svg">
             </a>
             <a id="home" href="/">
                 <img id="homeImgMaskLeft" src="../static/img/navMaskLeft.svg">
                 <img id="homeImg" src="../static/img/icons/homeHollow.svg">
             </a>
-            <a id="issues" href="issues">
+            <a id="issues" href="/issues">
                 <img id="homeImgMaskRight" src="../static/img/navMaskRight.svg">
                 <img id="issuesImg" src="../static/img/icons/issuesHollow.svg">
             </a>

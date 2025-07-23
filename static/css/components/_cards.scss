@@ -1,0 +1,38 @@
+#roomList {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  column-gap: 1.5rem;
+  row-gap: 1rem;
+  li {
+    background-color: var(--tertiaryBackgroundColor);
+    height: 10.4rem;
+    box-shadow: var(--boxShadowSm);
+    a {
+      position: relative;
+      display: block;
+      height: 100%;
+      img {
+        width: 100%;
+        height: 100%;
+        border-radius: 0.2rem 0.2rem 0 0;
+      }
+      div {
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+        background-color: var(--secundaryBackgroundColor600);
+        color: var(--secundaryTextColor);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 0.4rem 0;
+        border-radius: 0 0 0.2rem 0.2rem;
+        p {
+          font-size: 1.2rem;
+          font-weight: 400;
+          text-align: center;
+        }
+      }
+    }
+  }
+}

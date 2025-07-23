@@ -22,6 +22,7 @@
   --primaryTextColor: #1e1e1e;
   --secundaryTextColor: #ffffff;
   --boxShadow: 0px 1px 4px 0px rgba(0, 0, 0, 0.25);
+  --boxShadowSm: 0px 1px 2px 0px rgba(0, 0, 0, 0.25);
 }
 
 .navigationItemActive {
@@ -45,6 +46,12 @@ html {
 
 body {
   background-color: var(--primaryBackgroundColor);
+  overflow-x: hidden;
+}
+
+main {
+  margin-top: 5.4rem;
+  padding: 0 2rem;
 }
 
 li {
@@ -64,10 +71,21 @@ img {
   display: block;
 }
 
+h1,
+h2,
+h3 {
+  font-family: "Plus Jakarta Sans", sans-serif;
+}
+
 h1 {
   font-size: 1.8rem;
-  font-family: "Plus Jakarta Sans", sans-serif;
   font-weight: 500;
+}
+
+p,
+a,
+button {
+  font-family: "IBM Plex Sans", sans-serif;
 }
 
 button {
@@ -88,9 +106,12 @@ button {
 }
 
 header {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  height: 4rem;
   background-color: var(--secundaryBackgroundColor500);
   color: var(--secundaryTextColor);
-  height: 4rem;
   border-radius: 0 0 2rem 2rem;
   box-shadow: var(--boxShadow);
 }
@@ -143,7 +164,7 @@ footer nav a:nth-of-type(2) {
 }
 footer nav a:nth-of-type(2) #homeImgMaskLeft {
   position: absolute;
-  top: 0;
+  top: -0.1rem;
   right: 0;
 }
 footer nav a:nth-of-type(3) {
@@ -151,9 +172,48 @@ footer nav a:nth-of-type(3) {
 }
 footer nav a:nth-of-type(3) #homeImgMaskRight {
   position: absolute;
-  top: 0;
+  top: -0.1rem;
   left: 0;
 }
 footer nav a:last-of-type {
   border-radius: 0 2rem 0 0;
+}
+
+#roomList {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  column-gap: 1.5rem;
+  row-gap: 1rem;
+}
+#roomList li {
+  background-color: var(--tertiaryBackgroundColor);
+  height: 10.4rem;
+  box-shadow: var(--boxShadowSm);
+}
+#roomList li a {
+  position: relative;
+  display: block;
+  height: 100%;
+}
+#roomList li a img {
+  width: 100%;
+  height: 100%;
+  border-radius: 0.2rem 0.2rem 0 0;
+}
+#roomList li a div {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  background-color: var(--secundaryBackgroundColor600);
+  color: var(--secundaryTextColor);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0.4rem 0;
+  border-radius: 0 0 0.2rem 0.2rem;
+}
+#roomList li a div p {
+  font-size: 1.2rem;
+  font-weight: 400;
+  text-align: center;
 }/*# sourceMappingURL=styles.css.map */
