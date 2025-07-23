@@ -12,16 +12,16 @@ createIssueButton.addEventListener("click", () => {
 
 class Navigation {
   constructor() {
-    this.inventoryNavItem = document.getElementById("inventory");
+    this.inventoryNavItem = document.getElementById("inventoryWrapper");
     this.inventoryNavImg = document.getElementById("inventoryImg");
 
-    this.homeNavItem = document.getElementById("home");
+    this.homeNavItem = document.getElementById("homeWrapper");
     this.homeNavImg = document.getElementById("homeImg");
 
-    this.issuesNavItem = document.getElementById("issues");
+    this.issuesNavItem = document.getElementById("issueWrapper");
     this.issuesNavImg = document.getElementById("issuesImg");
 
-    this.profileNavItem = document.getElementById("profile");
+    this.profileNavItem = document.getElementById("profileWrapper");
     this.profileNavImg = document.getElementById("profileImg");
 
     this.url = window.location.href;
