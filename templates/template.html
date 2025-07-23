@@ -14,10 +14,15 @@
 
     <header>
         <ul>
-            <li>
+            <li id="backButtonItem">
+                <button id="goBackButton">
+                    <img src="../static/img/icons/arrowLeft.svg">
+                </button>
+            </li>
+            <li id="pageTitleItem">
                 <h1>{% block pageTitle %}{% endblock %}</h1>
             </li>
-            <li>
+            <li id="activityButtonItem">
                 <button id="activityButton">
                     <img src="../static/img/icons/activityBell.svg">
                 </button>
@@ -37,7 +42,10 @@
                 <img id="inventoryImg" src="../static/img/icons/inventoryHollow.svg">
             </a>
             <a id="home" href="/">
-                <img id="homeImgMaskLeft" src="../static/img/navMaskLeft.svg">
+                <svg id="homeImgMaskLeft" width="43" height="18" viewBox="0 0 43 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 10C29.8 17.2 39 18.0001 43 18V0H0C4.5 0 10 1 21 10Z" fill="#f1f1f1"/>
+                </svg>
+                <!-- <img id="homeImgMaskLeft" src="../static/img/navMaskLeft.svg"> -->
                 <img id="homeImg" src="../static/img/icons/homeHollow.svg">
             </a>
             <a id="issues" href="/issues">

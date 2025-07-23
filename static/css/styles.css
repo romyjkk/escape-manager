@@ -121,11 +121,15 @@ header ul {
   height: 100%;
   align-items: center;
 }
-header ul li:first-of-type {
+header ul #backButtonItem {
+  justify-self: start;
+  margin-left: 1.8rem;
+}
+header ul #pageTitleItem {
   grid-area: 1/2/2/3;
   justify-self: center;
 }
-header ul li:nth-of-type(2) {
+header ul #activityButtonItem {
   grid-area: 1/3/2/4;
   justify-self: end;
   margin-right: 2.4rem;

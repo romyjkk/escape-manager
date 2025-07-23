@@ -14,11 +14,15 @@ header {
     grid-template-columns: repeat(3, 1fr);
     height: 100%;
     align-items: center;
-    li:first-of-type {
+    #backButtonItem {
+      justify-self: start;
+      margin-left: 1.8rem;
+    }
+    #pageTitleItem {
       grid-area: 1 / 2 / 2 / 3;
       justify-self: center;
     }
-    li:nth-of-type(2) {
+    #activityButtonItem {
       grid-area: 1 / 3 / 2 / 4;
       justify-self: end;
       margin-right: 2.4rem;
