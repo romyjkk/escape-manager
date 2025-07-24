@@ -17,15 +17,15 @@ button {
   z-index: 1;
 }
 
-#createIssueRoomSelectButton,
 #createIssueAssignedToButton {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: var(--secundaryBackgroundColor600);
-  width: 3rem;
-  height: 3rem;
-  border-radius: 2rem;
+  width: fit-content;
+  // display: flex;
+  // justify-content: center;
+  // align-items: center;
+  // background-color: var(--secundaryBackgroundColor600);
+  // width: 3rem;
+  // height: 3rem;
+  // border-radius: 2rem;
 }
 
 #createIssuePrioritySelectButton {

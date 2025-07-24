@@ -10,7 +10,31 @@ def issues(room_id):
         return render_template('issues.html', room_id=room_id)
     else:
         return render_template('issuesHome.html')
+@app.route('/create_issue', methods=['POST'])
+def create_issue():
+    issuesFile = 'json/issues.json'
+    data = json.loads(request.data)
+    try:
+        with open(issuesFile, 'r') as file:
+            issues = json.load(file)
+    except FileNotFoundError:
+        issues = []
+    print("Creating issue with data:", data)
+    issues.append(data)
+    with open(issuesFile, 'w') as file:
+        json.dump(issues, file)
+    return jsonify({"status": "success", "data": data})
 
+# load priority
+@app.route('/get_priority')
+def get_priority():
+    try:
+        with open('json/priority.json') as file:
+            priority = json.load(file)
+            print(priority)
+            return jsonify(priority)
+    except FileNotFoundError:
+        return "Priority file not found", 404
 
 # load issues
 @app.route('/get_issues')

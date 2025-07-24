@@ -1,15 +1,252 @@
+// variables
+
+const createIssueButton = document.getElementById("createIssue");
+const createIssuePopup = document.getElementById("createIssueContainer");
+const createIssueRoomSelectButton = document.getElementById(
+  "createIssueRoomSelectButton"
+);
+const createIssueRoomSelectButtonImg = document.querySelector(
+  "#createIssueRoomSelectButton img"
+);
+const createIssueSelectPriorityButton = document.getElementById(
+  "createIssuePrioritySelectButton"
+);
+const createIssueSelectPriorityButtonImg = document.querySelector(
+  "#createIssuePrioritySelectButton img"
+);
+const createIssueAssignedToButton = document.getElementById(
+  "createIssueAssignedToButton"
+);
+const createIssueAssignedToButtonImg = document.querySelector(
+  "#createIssueAssignedToButton img"
+);
+const createIssueSubmitButton = document.getElementById(
+  "createIssueSubmitButton"
+);
+// global variables
+
+let createIssueSelectedRoom;
+let createIssueSelectedPriority;
+let createIssueSelectedAssignedTo;
+
+// create issue popup
+
+// eventListeners for buttons
+
+createIssueButton.addEventListener("click", () => {
+  createIssueContainer.classList.add("visible");
+  createIssueContainer.classList.remove("invisible");
+});
+
+createIssueRoomSelectButton.addEventListener("click", () => {
+  createIssueFetchRoomConfig();
+});
+
+createIssueSelectPriorityButton.addEventListener("click", () => {
+  createIssueFetchPriorityData();
+});
+
+createIssueAssignedToButton.addEventListener("click", () => {
+  createIssueFetchUserData();
+});
+createIssueSubmitButton.addEventListener("click", () => {
+  console.log("Create issue submit button clicked");
+  console.log("Selected Room:", createIssueSelectedRoom);
+  console.log("Selected Priority:", createIssueSelectedPriority);
+  console.log("Selected Assigned To:", createIssueSelectedAssignedTo);
+  $.ajax({
+    type: "POST",
+    url: "/create_issue",
+    data: {
+      room: createIssueSelectedRoom,
+      priority: createIssueSelectedPriority,
+      assignedTo: createIssueSelectedAssignedTo,
+    },
+    success: function (response) {
+      console.log("Issue created successfully:", response);
+      createIssueContainer.classList.remove("visible");
+      createIssueContainer.classList.add("invisible");
+      // Optionally, refresh the issues list or perform other actions
+    },
+  });
+  console.log("Create issue submit button clicked");
+});
+// fetch data from json for create issue popup
+
+function createIssueFetchRoomConfig() {
+  $.ajax({
+    type: "GET",
+    url: "/get_room_config",
+    success: function (createIssueRoomConfigData) {
+      console.log(createIssueRoomConfigData);
+      displayRooms(createIssueRoomConfigData);
+    },
+    error: function (error) {
+      console.log("Error fetching room config data:", error);
+    },
+  });
+}
+
+function createIssueFetchPriorityData() {
+  $.ajax({
+    type: "GET",
+    url: "/get_priority",
+    success: function (createIssuePriorityData) {
+      console.log(createIssuePriorityData);
+      displayPriority(createIssuePriorityData);
+    },
+    error: function (error) {
+      console.log("Error fetching priority config data:", error);
+    },
+  });
+}
+
+function createIssueFetchUserData() {
+  $.ajax({
+    type: "GET",
+    url: "/get_user_config",
+    success: function (createIssueUserData) {
+      console.log(createIssueUserData);
+      displayUsers(createIssueUserData);
+    },
+    error: function (error) {
+      console.log("Error fetching priority config data:", error);
+    },
+  });
+}
+
+// when the button to pick a room is clicked, this function will run
+
+function displayRooms(createIssueRoomConfigData) {
+  let roomList = document.getElementById("createIssueRoomOptions");
+  const roomOptions = createIssueRoomConfigData[0].availableRooms;
+
+  if (roomList.hasChildNodes()) {
+    return;
+  }
+
+  roomOptions.forEach((element) => {
+    console.log(element);
+
+    let createIssueRoomOption = document.createElement("li");
+    let createIssueRoomButton = document.createElement("button");
+    createIssueRoomButton.type = "button";
+
+    createIssueRoomButton.id = `${element.room
+      .replace(/\s+/g, "-")
+      .toLowerCase()}`;
+
+    createIssueRoomButton.addEventListener("click", () => {
+      createIssueSelectedRoom = createIssueRoomButton.id;
+      createIssueRoomSelectButtonImg.src = element.icon;
+
+      roomList.innerHTML = ""; // Clear the room list
+    });
+
+    let createIssueRoomName = document.createElement("p");
+    let createIssueRoomIcon = document.createElement("img");
+
+    createIssueRoomName.textContent = element.room;
+    createIssueRoomIcon.src = element.icon;
+
+    createIssueRoomButton.appendChild(createIssueRoomName);
+    createIssueRoomButton.appendChild(createIssueRoomIcon);
+
+    createIssueRoomOption.appendChild(createIssueRoomButton);
+
+    roomList.appendChild(createIssueRoomOption);
+  });
+}
+
+// when the button to pick a priority is clicked, this function will run
+
+function displayPriority(createIssuePriorityData) {
+  let priorityList = document.getElementById("createIssuePriorityOptions");
+  const priorityOptions = createIssuePriorityData[0].availablePriority;
+
+  if (priorityList.hasChildNodes()) {
+    return;
+  }
+
+  priorityOptions.forEach((element) => {
+    console.log(element);
+
+    let createIssuePriorityOption = document.createElement("li");
+    let createIssuePriorityButton = document.createElement("button");
+    createIssuePriorityButton.type = "button";
+
+    createIssuePriorityButton.id = element.id;
+    console.log(createIssuePriorityButton.id);
+
+    createIssuePriorityButton.addEventListener("click", () => {
+      createIssueSelectedPriority = createIssuePriorityButton.id;
+      createIssueSelectPriorityButtonImg.src = element.icon;
+
+      priorityList.innerHTML = ""; // Clear the priority list
+    });
+
+    let createIssuePriorityName = document.createElement("p");
+    let createIssuePriorityIcon = document.createElement("img");
+
+    createIssuePriorityName.textContent = element.name;
+    createIssuePriorityIcon.src = element.icon;
+
+    createIssuePriorityButton.appendChild(createIssuePriorityName);
+    createIssuePriorityButton.appendChild(createIssuePriorityIcon);
+
+    createIssuePriorityOption.appendChild(createIssuePriorityButton);
+
+    priorityList.appendChild(createIssuePriorityOption);
+  });
+}
+
+// when the button to pick someone to assign is clicked, this function will run
+
+function displayUsers(createIssueUserData) {
+  let userList = document.getElementById("createIssueAssignedToOptions");
+  const userOptions = createIssueUserData[0].availableUsers;
+
+  if (userList.hasChildNodes()) {
+    return;
+  }
+
+  console.log("werk it queennn");
+
+  userOptions.forEach((element) => {
+    console.log(element);
+
+    let createIssueUserOption = document.createElement("li");
+    let createIssueUserButton = document.createElement("button");
+    createIssueUserButton.type = "button";
+
+    createIssueUserButton.id = element.id;
+
+    createIssueUserButton.addEventListener("click", () => {
+      createIssueSelectedAssignedTo = createIssueUserButton.id;
+      createIssueAssignedToButtonImg.src = element.avatar;
+
+      userList.innerHTML = "";
+    });
+
+    let createIssueUserName = document.createElement("p");
+    let createIssueUserIcon = document.createElement("img");
+
+    createIssueUserName.textContent = element.name;
+    createIssueUserIcon.src = element.avatar;
+
+    createIssueUserButton.appendChild(createIssueUserName);
+    createIssueUserButton.appendChild(createIssueUserIcon);
+
+    createIssueUserOption.appendChild(createIssueUserButton);
+    userList.appendChild(createIssueUserOption);
+  });
+}
+
 // contains code used on every page
 
 const activityButton = document.getElementById("activityButton");
 activityButton.addEventListener("click", () => {
   console.log("Activity button clicked");
-});
-
-const createIssueButton = document.getElementById("createIssue");
-const createIssuePopup = document.getElementById("createIssueContainer");
-createIssueButton.addEventListener("click", () => {
-  createIssueContainer.classList.add("visible");
-  createIssueContainer.classList.remove("invisible");
 });
 
 class Navigation {
