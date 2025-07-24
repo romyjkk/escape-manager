@@ -9,8 +9,19 @@ h1 {
   font-weight: 500;
 }
 
+h3 {
+  font-size: 1.2rem;
+  font-weight: 500;
+}
+
 p,
 a,
-button {
+button,
+input {
   font-family: "IBM Plex Sans", sans-serif;
+}
+
+p {
+  font-size: 1.2rem;
+  font-weight: 400;
 }

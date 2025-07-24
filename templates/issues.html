@@ -1,48 +1,126 @@
 {% extends "template.html" %}
 
 {% block pageTitle %}
-    {{ room_id }}
+    {{ room_name }}
 {% endblock %}
 
 {% block content %}
 <main>
-        <nav>
-            <button id="activeIssues">
+    <section id="filterPanel">
+        <nav id="activeArchive">
+            <button id="activeIssues" class="text-md">
                 Actief
             </button>
-            <button id="archivedIssues">
+            <button id="archivedIssues" class="text-md">
                 Archief
             </button>
         </nav>
 
         <form id="filterAndSort">
-            <fieldset id="sortAndFilterContainer">
-                <p id="sortedText">Lorem ipsum</p>
-                <div id="sort">
-                    <label for="sortBy"><img src="../static/img/icons/sort.svg"></label>
-                    <select id="sortBy">
-                        <option value="priorityHighToLow">Prioriteit hoog naar laag</option>
-                        <option value="priorityLowToHigh">Prioriteit laag naar hoog</option>
-                        <option value="newToOld">Nieuw naar oud</option>
-                        <option value="oldToNew">Oud naar nieuw</option>
-                    </select>
-                </div>
+            <fieldset>
+                <p id="sortedText" class="text-md">Lorem ipsum</p>
+                <div id="filterAndSortContainer">
+                    <div id="sort">
+                        <button><img src="../static/img/icons/sort.svg"></button>
+                        <ul id="sortBy">
+                            <li value="priorityHighToLow">
+                                <p>Prioriteit hoog naar laag</p>
+                                <input type="radio" name="sort" />
+                            </li>
+                            <li value="priorityLowToHigh">
+                                <p>Prioriteit laag naar hoog</p>
+                                <input type="radio" name="sort" />
+                            </li>
+                            <li value="newToOld">
+                                <p>Nieuw naar oud</p>
+                                <input type="radio" name="sort" />
+                            </li>
+                            <li value="oldToNew">
+                                <p>Oud naar nieuw</p>
+                                <input type="radio" name="sort" />
+                            </li>
+                        </ul>
+                    </div>
 
-                <div id="filter">
-                    <label for="filterBy"><img src="../static/img/icons/filter.svg"></label>
-                    <select id="filterBy">
-                        <option value="room">Kamer</option>
-                        <option value="priority">Prioriteit</option>
-                        <option value="createdBy">Gemeld door</option>
-                        <option value="assignedTo">Toegewezen aan</option>
-                    </select>
+                    <div id="filter">
+                            <button><img src="../static/img/icons/filter.svg"></button>
+                            <ul id="filterBy">
+                                <li value="room">
+                                    <p>Kamer</p>
+                                    <ul>
+                                        <li>
+                                            <p>The Wizard School</p>
+                                            <input type="checkbox" />
+                                        </li>
+                                        <li>                                            
+                                            <p>Cabin 666</p>
+                                            <input type="checkbox" />
+                                        </li>
+                                        <li>
+                                            <p>Space Hunter</p>
+                                            <input type="checkbox" />
+                                        </li>
+                                        <li>
+                                            <p>Theft at the Morgue</p>
+                                            <input type="checkbox" />
+                                        </li>
+                                        <li>
+                                            <p>Infinicorp Laboratory</p>
+                                            <input type="checkbox" />
+                                        </li>
+                                        <li>
+                                            <p>The Exorcist</p>
+                                            <input type="checkbox" />
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li value="priority">
+                                    <p>Prioriteit</p>
+                                    <ul>
+                                        <li>
+                                            <p>Hoog</p>
+                                            <input type="checkbox" />
+
+                                        </li>
+                                        <li>                                            
+                                            <p>Gemiddeld</p>
+                                            <input type="checkbox" />
+                                        </li>
+                                        <li>
+                                            <p>Laag</p>
+                                            <input type="checkbox" />
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li value="createdBy">
+                                    <p>Gemeld door</p>
+                                    <ul>
+                                        <li>
+                                            <p>Peter</p>
+                                            <input type="checkbox" />
+                                        </li>
+                                        <li>                                            
+                                            <p>Kevin</p>
+                                            <input type="checkbox" />
+                                        </li>
+                                        <li>
+                                            <p>Anna</p>
+                                            <input type="checkbox" />
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li value="assignedTo">
+                                    <p>Toegewezen aan</p>
+                                </li>
+                            </ul>
+                    </div>
                 </div>
             </fieldset>
 
             <ul id="filterOptions">
                 <li>
                     <button>
-                        <p>Kamer</p>
+                        <p class="text-sm">Kamer</p>
                         <svg width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M9.05273 3.01758L3.01764 9.05267" stroke="white" stroke-width="0.7" stroke-linecap="round"/>
                             <path d="M9.05273 9.05266L3.01764 3.01756" stroke="white" stroke-width="0.7" stroke-linecap="round"/>
@@ -51,6 +129,7 @@
                 </li>
             </ul>
         </form>
+    </section>
 
         <!-- actief & archief -->
         <!-- sorteren & filtreren -->

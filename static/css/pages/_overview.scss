@@ -1,0 +1,35 @@
+#issueCards {
+  li {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    background-color: var(--tertiaryBackgroundColor);
+    padding: 1rem;
+    .textWrapper {
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+    }
+    .infoWrapper {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      .imgAndStatusWrapper {
+        display: flex;
+        flex-direction: row;
+        gap: 0.5rem;
+        img {
+          width: 100%;
+        }
+      }
+      .priorityAndAssignedWrapper {
+        display: flex;
+        flex-direction: row;
+        gap: 0.5rem;
+        img {
+          width: 100%;
+        }
+      }
+    }
+  }
+}

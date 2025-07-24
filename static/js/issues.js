@@ -14,7 +14,7 @@ $(document).ready(function () {
   // Dynamically display issues
   function displayIssues(issueData) {
     let issueList = document.getElementById("issueCards");
-    let roomTitle = document.getElementById("roomTitle");
+    let roomTitle = document.getElementById("pageTitle");
     roomTitle.textContent = `${roomIdCheck.replace(/-/g, " ")}`.replace(
       /\b\w/g,
       (l) => l.toUpperCase()
@@ -33,16 +33,28 @@ $(document).ready(function () {
         let issueAssigned;
 
         let issueItem = document.createElement("li");
+
         let issueName = document.createElement("h2");
         let issueDescription = document.createElement("p");
+        let textWrapper = document.createElement("article");
+        textWrapper.classList.add("textWrapper");
+
         if (issue.image) {
           issueImg = document.createElement("img");
         }
         let issueStatus = document.createElement("p");
+        let imgAndStatusWrapper = document.createElement("figure");
+        imgAndStatusWrapper.classList.add("imgAndStatusWrapper");
+
         if (issue.assigned) {
           issueAssigned = document.createElement("img");
         }
         let issuePriority = document.createElement("p");
+        let priorityAndAssignedWrapper = document.createElement("figure");
+        priorityAndAssignedWrapper.classList.add("priorityAndAssignedWrapper");
+
+        let infoWrapper = document.createElement("article");
+        infoWrapper.classList.add("infoWrapper");
 
         issueName.textContent = `${issue.title}`;
         issueDescription.textContent = `${issue.description}`;
@@ -58,13 +70,20 @@ $(document).ready(function () {
 
         issuePriority.textContent = `${issue.priority}`;
 
-        issueItem.appendChild(issueName);
-        issueItem.appendChild(issueDescription);
-        issueItem.appendChild(issueImg);
-        issueItem.appendChild(issueStatus);
-        issueItem.appendChild(issueAssigned);
-        issueItem.appendChild(issuePriority);
+        textWrapper.appendChild(issueName);
+        textWrapper.appendChild(issueDescription);
 
+        imgAndStatusWrapper.appendChild(issueImg);
+        imgAndStatusWrapper.appendChild(issueStatus);
+
+        priorityAndAssignedWrapper.appendChild(issueAssigned);
+        priorityAndAssignedWrapper.appendChild(issuePriority);
+
+        infoWrapper.appendChild(imgAndStatusWrapper);
+        infoWrapper.appendChild(priorityAndAssignedWrapper);
+
+        issueItem.appendChild(textWrapper);
+        issueItem.appendChild(infoWrapper);
         issueList.appendChild(issueItem);
       });
     });

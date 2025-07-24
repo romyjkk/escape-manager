@@ -20,7 +20,7 @@
                 </button>
             </li>
             <li id="pageTitleItem">
-                <h1>{% block pageTitle %}{% endblock %}</h1>
+                <h1 id="pageTitle">{% block pageTitle %}{% endblock %}</h1>
             </li>
             <li id="activityButtonItem">
                 <button id="activityButton">
@@ -32,6 +32,53 @@
 
     {% block content %}
     {% endblock %}
+
+    <div id="createIssueContainer" class="invisible">
+        <form id="createIssuePopup">
+            <div class="createIssueHeader">
+                <input type="text" placeholder="Naam..." name="issueName" />
+                <div class="createIssueButtonGroup">
+                    <button><img src="../static/img/icons/trashBin.svg"></button>
+                    <button><img src="../static/img/icons/xBig.svg"></button>
+                </div>
+            </div>
+            <input type="file" accept="image/*" id="issueImageInput" />
+            <input type="text" placeholder="Schrijf een beschrijving..." name="issueDescription" />
+            <div class="createIssueRoom">
+                <h3>Kamer</h3>
+                <button id="createIssueRoomSelectButton">
+                    <img src="../static/img/icons/smallPlus.svg">
+                </button>
+                <ul id="createIssueRoomOptions"></ul>
+            </div>
+            <div class="createIssuePriorityAndAssigned">
+                <div class="createIssuePriority">
+                    <h3>Prioriteit</h3>
+                    <button id="createIssuePrioritySelectButton">
+                        <svg width="35" height="30" viewBox="0 0 35 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M0.176532 29.1989L17.1206 0.294332C17.1978 0.162524 17.3884 0.162523 17.4656 0.294332L34.4097 29.1989C34.4878 29.3322 34.3917 29.5 34.2371 29.5H0.349072C0.194523 29.5 0.0983739 29.3322 0.176532 29.1989Z" fill="#154781"/>
+                            <path d="M18.3107 24.4137C18.3107 23.5999 17.6326 23.3965 17.2935 23.3965C16.9544 23.3965 16.2762 23.5999 16.2762 24.4137C16.2762 25.2275 16.9544 25.431 17.2935 25.431C17.6326 25.431 18.3107 25.2275 18.3107 24.4137Z" fill="white"/>
+                            <path d="M17.2933 11.1897V20.3449" stroke="white" stroke-linecap="round"/>
+                        </svg>    
+                    </button>
+                    <ul id="createIssuePriorityOptions">
+
+                    </ul>
+                </div>
+                <div class="createIssueAssignedTo">
+                    <h3>Toegewezen aan</h3>
+                    <button id="createIssueAssignedToButton">
+                        <img src="../static/img/icons/plus.svg">
+                    </button>
+                    <ul id="createIssueAssignedToOptions"></ul>
+                </div>
+            </div>
+            <button type="submit" id="createIssueSubmitButton">
+                Opslaan
+            </button>
+        
+        </form>
+    </div>
 
     <footer>
         <button id="createIssue">

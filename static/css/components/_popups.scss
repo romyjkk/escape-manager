@@ -1,0 +1,42 @@
+@use "../abstracts/variables" as *;
+
+#createIssueContainer {
+  position: fixed;
+  height: 100%;
+  width: 100%;
+  top: 0;
+  padding: 2rem;
+  z-index: 1;
+  background: rgba(0, 0, 0, 0.5);
+  #createIssuePopup {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1rem 2rem;
+    background-color: var(--tertiaryBackgroundColor);
+    .createIssueHeader {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      .createIssueButtonGroup {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        gap: 1rem;
+      }
+    }
+    .createIssueRoom,
+    .createIssuePriority,
+    .createIssueAssignedTo {
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+    }
+    .createIssuePriorityAndAssigned {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+    }
+  }
+}

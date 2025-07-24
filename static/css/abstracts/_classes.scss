@@ -1,7 +1,23 @@
+.visible {
+  display: block;
+}
+
+.invisible {
+  display: none;
+}
+
 .navigationItemActive {
   background-color: var(--secundaryBackgroundColor700);
 }
 
 .navigationItemInactive {
   background-color: var(--tertiaryBackgroundColor);
+}
+
+.text-sm {
+  font-size: 1rem;
+}
+
+.text-md {
+  font-size: 1.2rem;
 }

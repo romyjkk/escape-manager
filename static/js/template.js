@@ -6,8 +6,10 @@ activityButton.addEventListener("click", () => {
 });
 
 const createIssueButton = document.getElementById("createIssue");
+const createIssuePopup = document.getElementById("createIssueContainer");
 createIssueButton.addEventListener("click", () => {
-  console.log("Create new issue");
+  createIssueContainer.classList.add("visible");
+  createIssueContainer.classList.remove("invisible");
 });
 
 class Navigation {
