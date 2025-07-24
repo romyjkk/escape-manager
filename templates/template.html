@@ -43,6 +43,10 @@
                 </div>
             </div>
             <input type="file" accept="image/*" id="issueImageInput" />
+            <div id="imagePreview" style="display: none;">
+                <img id="previewImg" src="" alt="Image Preview" style="max-width: 200px; max-height: 200px; object-fit: cover; border-radius: 4px;" />
+                <button type="button" id="removeImageButton" style="margin-left: 10px; background: #ff6b6b; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer;">Remove</button>
+            </div>
             <input id="issueDescription" type="text" placeholder="Schrijf een beschrijving..." name="issueDescription" />
             <div class="createIssueRoom">
                 <h3>Kamer</h3>

@@ -1,7 +1,21 @@
-from flask import Flask, render_template, jsonify
+from flask import Flask, render_template, jsonify, request
 import json
-from flask import request
+import os
+from werkzeug.utils import secure_filename
+import uuid
 app = Flask(__name__)
+
+# Configure upload settings
+UPLOAD_FOLDER = 'static/img/issues'
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+# Ensure upload directory exists
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 # issue page, user can see issues for a specific room
 @app.route('/issues', defaults={'room_id': None})
@@ -9,9 +23,57 @@ app = Flask(__name__)
 @app.route('/issues/<room_id>')
 def issues(room_id):
     if (room_id):
+        if room_id == 'all-issues':
+            return render_template('allIssues.html')
         return render_template('issues.html', room_id=room_id)
     else:
         return render_template('issuesHome.html')
+
+@app.route('/upload_issue_image', methods=['POST'])
+def upload_issue_image():
+    if 'file' not in request.files:
+        return jsonify({'error': 'No file part'}), 400
+    
+    file = request.files['file']
+    if file.filename == '':
+        return jsonify({'error': 'No selected file'}), 400
+    
+    if file and allowed_file(file.filename):
+        # Generate unique filename
+        file_extension = file.filename.rsplit('.', 1)[1].lower()
+        unique_filename = f"{uuid.uuid4().hex}.{file_extension}"
+        filename = secure_filename(unique_filename)
+        
+        file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        file.save(file_path)
+        
+        # Return the relative path for use in the frontend
+        relative_path = f"../static/img/issues/{filename}"
+        return jsonify({'success': True, 'imagePath': relative_path})
+    
+    return jsonify({'error': 'File type not allowed'}), 400
+
+@app.route('/delete_issue_image', methods=['DELETE'])
+def delete_issue_image():
+    data = request.get_json()
+    image_path = data.get('imagePath')
+    
+    if not image_path:
+        return jsonify({'error': 'No image path provided'}), 400
+    
+    # Extract filename from the relative path
+    # imagePath is like "../static/img/issues/filename.jpg"
+    filename = os.path.basename(image_path)
+    file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+    
+    try:
+        if os.path.exists(file_path):
+            os.remove(file_path)
+            return jsonify({'success': True, 'message': 'Image deleted successfully'})
+        else:
+            return jsonify({'error': 'Image file not found'}), 404
+    except Exception as e:
+        return jsonify({'error': f'Error deleting image: {str(e)}'}), 500
 
 @app.route('/create_issue', methods=['POST'])
 def create_issue():
@@ -28,6 +90,60 @@ def create_issue():
     with open(issuesFile, 'w', encoding='utf-8') as file:
         json.dump(issues, file, ensure_ascii=False, indent=4)
     return jsonify({"status": "success", "data": data})
+
+@app.route('/update_issue/<int:issue_index>', methods=['PUT'])
+def update_issue(issue_index):
+    issuesFile = 'json/issues.json'
+    data = request.get_json()
+    print("Updating issue at index:", issue_index, "with data:", data)
+    try:
+        with open(issuesFile, 'r', encoding='utf-8') as file:
+            issues = json.load(file)
+        
+        if 0 <= issue_index < len(issues):
+            issues[issue_index] = data
+            with open(issuesFile, 'w', encoding='utf-8') as file:
+                json.dump(issues, file, ensure_ascii=False, indent=4)
+            return jsonify({"status": "success", "data": data})
+        else:
+            return jsonify({"status": "error", "message": "Issue not found"}), 404
+    except FileNotFoundError:
+        return jsonify({"status": "error", "message": "Issues file not found"}), 404
+
+@app.route('/delete_issue/<int:issue_index>', methods=['DELETE'])
+def delete_issue(issue_index):
+    issuesFile = 'json/issues.json'
+    print("Deleting issue at index:", issue_index)
+    try:
+        with open(issuesFile, 'r', encoding='utf-8') as file:
+            issues = json.load(file)
+        
+        if 0 <= issue_index < len(issues):
+            deleted_issue = issues[issue_index]
+            
+            # Delete associated image if it exists
+            if deleted_issue and isinstance(deleted_issue, dict) and deleted_issue.get('image'):
+                image_path = deleted_issue['image']
+                filename = os.path.basename(image_path)
+                file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+                
+                try:
+                    if os.path.exists(file_path):
+                        os.remove(file_path)
+                        print(f"Deleted image file: {file_path}")
+                except Exception as e:
+                    print(f"Error deleting image file: {e}")
+            
+            # Remove the issue from the list
+            issues.pop(issue_index)
+            
+            with open(issuesFile, 'w', encoding='utf-8') as file:
+                json.dump(issues, file, ensure_ascii=False, indent=4)
+            return jsonify({"status": "success", "deleted": deleted_issue})
+        else:
+            return jsonify({"status": "error", "message": "Issue not found"}), 404
+    except FileNotFoundError:
+        return jsonify({"status": "error", "message": "Issues file not found"}), 404
 
 # load priority
 @app.route('/get_priority')
@@ -92,6 +208,27 @@ def get_user_config():
             return jsonify(user_config)
     except FileNotFoundError:
         return "User config file not found", 404
+
+@app.route('/get_all_config')
+def get_all_config():
+    try:
+        config_data = {}
+        
+        # Load room config
+        with open('json/config.json') as file:
+            config_data['rooms'] = json.load(file)
+        
+        # Load priority config
+        with open('json/priority.json') as file:
+            config_data['priorities'] = json.load(file)
+        
+        # Load user config
+        with open('json/userConfig.json') as file:
+            config_data['users'] = json.load(file)
+        
+        return jsonify(config_data)
+    except FileNotFoundError as e:
+        return f"Config file not found: {e}", 404
 
 # standard route, calls HTML page
 @app.route('/')

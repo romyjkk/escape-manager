@@ -1,48 +1,8 @@
 [
     {
-        "issues": [
-            {
-                "id": "id-1",
-                "title": "Pusher Space",
-                "description": "Pusher vliegt steeds los.",
-                "image": "../static/img/placeholder.svg",
-                "category": [
-                    {
-                        "room": "Space Hunter"
-                    },
-                    {
-                        "room": "Infinicorp Laboratory"
-                    }
-                ],
-                "priority": "low",
-                "assigned": "Peter",
-                "creator": "Peter",
-                "date": "01/05/2025 13:54",
-                "status": "in progress"
-            },
-            {
-                "id": "id-2",
-                "title": "Tasks autotick maken",
-                "description": "Taken in de kamers die nog niet gedaan zijn autotick maken.",
-                "image": "../static/img/placeholder.svg",
-                "room": "the-wizard-school",
-                "priority": "low",
-                "assignedTo": "user-2",
-                "creator": "Peter",
-                "date": "01/05/2025 13:54",
-                "status": "in progress"
-            },
-            {
-                "room": "cabin-666",
-                "priority": "medium",
-                "assignedTo": "user-1"
-            }
-        ]
+        "title": "whatever2",
+        "name": "whatever2"
     },
-    {
-        "title": "whatever"
-    },
-    {},
     {
         "name": "godpghkml;",
         "description": "jgbhjj"
@@ -120,5 +80,48 @@
         "description": "jgbhjj",
         "room": "the-wizard-school",
         "priority": "high"
+    },
+    {
+        "name": "mpengu",
+        "description": "afasf",
+        "room": "cabin-666",
+        "priority": "medium",
+        "assignedTo": "user-2"
+    },
+    {
+        "name": "godpghkml2",
+        "description": "jgbhjj2",
+        "room": "infinicorp-laboratory",
+        "priority": "medium",
+        "assignedTo": "user-2"
+    },
+    {
+        "name": "godpghkml;",
+        "description": "jgbhjjasd",
+        "room": "infinicorp-laboratory",
+        "priority": "medium",
+        "assignedTo": "user-1"
+    },
+    {
+        "name": "godpghkml;",
+        "description": "jgbhjjasd",
+        "room": "infinicorp-laboratory",
+        "priority": "medium",
+        "assignedTo": "user-1"
+    },
+    {
+        "name": "dsasf",
+        "description": "sgsg",
+        "room": "cabin-666",
+        "priority": "medium",
+        "assignedTo": "user-1"
+    },
+    {
+        "name": "uu",
+        "description": "jj",
+        "room": "infinicorp-laboratory",
+        "priority": "low",
+        "assignedTo": "user-1",
+        "image": null
     }
 ]

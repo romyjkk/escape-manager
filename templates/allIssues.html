@@ -1,0 +1,17 @@
+{% extends "template.html" %}
+
+{% block pageTitle %}
+    Alle Meldingen
+{% endblock %}
+
+{% block content %}
+<main>
+    <ul id="allIssuesList">
+        <!-- Dit is tijdelijk totdat je een andere manier maakt. -->
+    </ul>
+</main>
+{% endblock %}
+
+{% block scripts %}
+    <script src="{{ url_for('static', filename='js/allIssues.js') }}"></script>
+{% endblock %}

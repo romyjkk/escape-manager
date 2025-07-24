@@ -4,6 +4,10 @@ const createIssueButton = document.getElementById("createIssue");
 const createIssuePopup = document.getElementById("createIssueContainer");
 const createIssueNameInput = document.getElementById("issueName");
 const createIssueDescriptionInput = document.getElementById("issueDescription");
+const createIssueImageInput = document.getElementById("issueImageInput");
+const imagePreview = document.getElementById("imagePreview");
+const previewImg = document.getElementById("previewImg");
+const removeImageButton = document.getElementById("removeImageButton");
 const deleteIssueButton = document.getElementById("deleteIssue");
 const createIssueRoomSelectButton = document.getElementById(
   "createIssueRoomSelectButton"
@@ -33,6 +37,7 @@ let createIssueDescription;
 let createIssueSelectedRoom;
 let createIssueSelectedPriority;
 let createIssueSelectedAssignedTo;
+let createIssueImagePath = null;
 
 // create issue popup
 
@@ -59,6 +64,96 @@ deleteIssueButton.addEventListener("click", () => {
   resetForms();
 });
 
+// Image upload and preview functionality
+createIssueImageInput.addEventListener("change", handleImageUpload);
+
+removeImageButton.addEventListener("click", () => {
+  // If there's an uploaded image, delete it from the server
+  if (createIssueImagePath) {
+    $.ajax({
+      type: "DELETE",
+      url: "/delete_issue_image",
+      contentType: "application/json",
+      data: JSON.stringify({
+        imagePath: createIssueImagePath
+      }),
+      success: function(response) {
+        console.log("Image deleted from server:", response);
+      },
+      error: function(error) {
+        console.log("Error deleting image from server:", error);
+      }
+    });
+  }
+  
+  // Reset the form state
+  createIssueImagePath = null;
+  createIssueImageInput.value = "";
+  imagePreview.style.display = "none";
+});
+
+function handleImageUpload(event) {
+  const file = event.target.files[0];
+  if (file) {
+    // If there was a previous image, delete it from the server
+    const previousImagePath = createIssueImagePath;
+    
+    // Show preview immediately
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      previewImg.src = e.target.result;
+      imagePreview.style.display = "block";
+    };
+    reader.readAsDataURL(file);
+
+    // Upload the file
+    const formData = new FormData();
+    formData.append('file', file);
+
+    $.ajax({
+      type: "POST",
+      url: "/upload_issue_image",
+      data: formData,
+      processData: false,
+      contentType: false,
+      success: function(response) {
+        if (response.success) {
+          // Delete the previous image if it exists
+          if (previousImagePath) {
+            $.ajax({
+              type: "DELETE",
+              url: "/delete_issue_image",
+              contentType: "application/json",
+              data: JSON.stringify({
+                imagePath: previousImagePath
+              }),
+              success: function(deleteResponse) {
+                console.log("Previous image deleted from server:", deleteResponse);
+              },
+              error: function(error) {
+                console.log("Error deleting previous image from server:", error);
+              }
+            });
+          }
+          
+          createIssueImagePath = response.imagePath;
+          console.log("Image uploaded successfully:", response.imagePath);
+        } else {
+          alert("Error uploading image: " + response.error);
+          createIssueImageInput.value = "";
+          imagePreview.style.display = "none";
+        }
+      },
+      error: function(error) {
+        console.log("Error uploading image:", error);
+        alert("Error uploading image");
+        createIssueImageInput.value = "";
+        imagePreview.style.display = "none";
+      }
+    });
+  }
+}
+
 createIssueSubmitButton.addEventListener("click", () => {
   createIssueName = createIssueNameInput.value;
   createIssueDescription = createIssueDescriptionInput.value;
@@ -82,6 +177,7 @@ createIssueSubmitButton.addEventListener("click", () => {
       room: createIssueSelectedRoom,
       priority: createIssueSelectedPriority,
       assignedTo: createIssueSelectedAssignedTo,
+      image: createIssueImagePath,
     }),
     success: function (response) {
       console.log("Issue created successfully:", response);
@@ -95,12 +191,24 @@ function resetForms() {
   // Reset the form fields
   createIssueNameInput.value = "";
   createIssueDescriptionInput.value = "";
+  createIssueImageInput.value = "";
+  imagePreview.style.display = "none";
   createIssueRoomSelectButtonImg.src = "../static/img/plusButton.svg";
   createIssueSelectPriorityButtonImg.src =
     "../static/img/priority/priority.svg";
   createIssueAssignedToButtonImg.src = "../static/img/plusButton.svg";
+  
+  // Reset global variables
+  createIssueSelectedRoom = null;
+  createIssueSelectedPriority = null;
+  createIssueSelectedAssignedTo = null;
+  createIssueImagePath = null;
+  
   createIssueContainer.classList.remove("visible");
   createIssueContainer.classList.add("invisible");
+  
+  // Reset submit button text
+  createIssueSubmitButton.textContent = "Opslaan";
 }
 
 function createIssueFetchRoomConfig() {

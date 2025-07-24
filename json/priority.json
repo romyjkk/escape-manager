@@ -5,19 +5,19 @@
                 "id": "low",
                 "name": "Laag",
                 "description": "De spelers merken het niet of weinig",
-                "icon": "./static/img/priority/low.svg"
+                "icon": "../static/img/priority/low.svg"
             },
             {
                 "id": "medium",
                 "name": "Gemiddeld",
                 "description": "De kamer is te spelen maar spelers merken het wel",
-                "icon": "./static/img/priority/medium.svg"
+                "icon": "../static/img/priority/medium.svg"
             },
             {
                 "id": "high",
                 "name": "Hoog",
                 "description": "De kamer is niet te spelen",
-                "icon": "./static/img/priority/high.svg"
+                "icon": "../static/img/priority/high.svg"
             }
         ]
     }
