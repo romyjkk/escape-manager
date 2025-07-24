@@ -23,24 +23,16 @@
         "title": "Tasks autotick maken",
         "description": "Taken in de kamers die nog niet gedaan zijn autotick maken.",
         "image": "../static/img/placeholder.svg",
-        "category": [
-            {
-                "room": "Space Hunter"
-            },
-            {
-                "room": "The Wizard School"
-            },
-            {
-                "room": "Cabin 666"
-            },
-            {
-                "room": "Infinicorp Laboratory"
-            }
-        ],
+        "room": "the-wizard-school",
         "priority": "low",
-        "assigned": "Kevin",
+        "assignedTo": "user-2",
         "creator": "Peter",
         "date": "01/05/2025 13:54",
         "status": "in progress"
+    },
+    {
+        "room": "cabin-666",
+        "priority": "medium",
+        "assignedTo": "user-1"
     }
 ]

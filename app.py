@@ -1,5 +1,6 @@
 from flask import Flask, render_template, jsonify
 import json
+from flask import request
 app = Flask(__name__)
 
 # issue page, user can see issues for a specific room
@@ -13,16 +14,17 @@ def issues(room_id):
 @app.route('/create_issue', methods=['POST'])
 def create_issue():
     issuesFile = 'json/issues.json'
-    data = json.loads(request.data)
+    data = request.get_json()
+    print("Received data:", data)
     try:
-        with open(issuesFile, 'r') as file:
+        with open(issuesFile, 'r', encoding='utf-8') as file:
             issues = json.load(file)
     except FileNotFoundError:
         issues = []
     print("Creating issue with data:", data)
     issues.append(data)
-    with open(issuesFile, 'w') as file:
-        json.dump(issues, file)
+    with open(issuesFile, 'w', encoding='utf-8') as file:
+        json.dump(issues, file, ensure_ascii=False, indent=4)
     return jsonify({"status": "success", "data": data})
 
 # load priority

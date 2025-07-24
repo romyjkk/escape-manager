@@ -50,26 +50,22 @@ createIssueAssignedToButton.addEventListener("click", () => {
   createIssueFetchUserData();
 });
 createIssueSubmitButton.addEventListener("click", () => {
-  console.log("Create issue submit button clicked");
-  console.log("Selected Room:", createIssueSelectedRoom);
-  console.log("Selected Priority:", createIssueSelectedPriority);
-  console.log("Selected Assigned To:", createIssueSelectedAssignedTo);
   $.ajax({
     type: "POST",
     url: "/create_issue",
-    data: {
+    contentType: "application/json",
+    data: JSON.stringify({
       room: createIssueSelectedRoom,
       priority: createIssueSelectedPriority,
       assignedTo: createIssueSelectedAssignedTo,
-    },
+      title: "whatever",
+    }),
     success: function (response) {
       console.log("Issue created successfully:", response);
       createIssueContainer.classList.remove("visible");
       createIssueContainer.classList.add("invisible");
-      // Optionally, refresh the issues list or perform other actions
     },
   });
-  console.log("Create issue submit button clicked");
 });
 // fetch data from json for create issue popup
 
