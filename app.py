@@ -5,12 +5,14 @@ app = Flask(__name__)
 
 # issue page, user can see issues for a specific room
 @app.route('/issues', defaults={'room_id': None})
+
 @app.route('/issues/<room_id>')
 def issues(room_id):
     if (room_id):
         return render_template('issues.html', room_id=room_id)
     else:
         return render_template('issuesHome.html')
+
 @app.route('/create_issue', methods=['POST'])
 def create_issue():
     issuesFile = 'json/issues.json'

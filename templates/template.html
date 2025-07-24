@@ -33,17 +33,17 @@
     {% block content %}
     {% endblock %}
 
-    <div id="createIssueContainer">
+    <div id="createIssueContainer" class="invisible">
         <form id="createIssuePopup">
             <div class="createIssueHeader">
-                <input type="text" placeholder="Naam..." name="issueName" />
+                <input id="issueName" type="text" placeholder="Naam..." name="issueName" />
                 <div class="createIssueButtonGroup">
-                    <button type="button"><img src="../static/img/icons/trashBin.svg"></button>
-                    <button type="button"><img src="../static/img/icons/xBig.svg"></button>
+                    <button id="deleteIssue" type="button"><img src="../static/img/icons/trashBin.svg"></button>
+                    <!-- <button type="button"><img src="../static/img/icons/xBig.svg"></button> -->
                 </div>
             </div>
             <input type="file" accept="image/*" id="issueImageInput" />
-            <input type="text" placeholder="Schrijf een beschrijving..." name="issueDescription" />
+            <input id="issueDescription" type="text" placeholder="Schrijf een beschrijving..." name="issueDescription" />
             <div class="createIssueRoom">
                 <h3>Kamer</h3>
                 <button type="button"id="createIssueRoomSelectButton">

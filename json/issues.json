@@ -1,38 +1,124 @@
 [
     {
-        "id": "id-1",
-        "title": "Pusher Space",
-        "description": "Pusher vliegt steeds los.",
-        "image": "../static/img/placeholder.svg",
-        "category": [
+        "issues": [
             {
-                "room": "Space Hunter"
+                "id": "id-1",
+                "title": "Pusher Space",
+                "description": "Pusher vliegt steeds los.",
+                "image": "../static/img/placeholder.svg",
+                "category": [
+                    {
+                        "room": "Space Hunter"
+                    },
+                    {
+                        "room": "Infinicorp Laboratory"
+                    }
+                ],
+                "priority": "low",
+                "assigned": "Peter",
+                "creator": "Peter",
+                "date": "01/05/2025 13:54",
+                "status": "in progress"
             },
             {
-                "room": "Infinicorp Laboratory"
+                "id": "id-2",
+                "title": "Tasks autotick maken",
+                "description": "Taken in de kamers die nog niet gedaan zijn autotick maken.",
+                "image": "../static/img/placeholder.svg",
+                "room": "the-wizard-school",
+                "priority": "low",
+                "assignedTo": "user-2",
+                "creator": "Peter",
+                "date": "01/05/2025 13:54",
+                "status": "in progress"
+            },
+            {
+                "room": "cabin-666",
+                "priority": "medium",
+                "assignedTo": "user-1"
             }
-        ],
-        "priority": "low",
-        "assigned": "Peter",
-        "creator": "Peter",
-        "date": "01/05/2025 13:54",
-        "status": "in progress"
+        ]
     },
     {
-        "id": "id-2",
-        "title": "Tasks autotick maken",
-        "description": "Taken in de kamers die nog niet gedaan zijn autotick maken.",
-        "image": "../static/img/placeholder.svg",
-        "room": "the-wizard-school",
-        "priority": "low",
-        "assignedTo": "user-2",
-        "creator": "Peter",
-        "date": "01/05/2025 13:54",
-        "status": "in progress"
+        "title": "whatever"
+    },
+    {},
+    {
+        "name": "godpghkml;",
+        "description": "jgbhjj"
     },
     {
+        "name": "godpghkml",
+        "description": "jgbhjj"
+    },
+    {
+        "name": "",
+        "description": "dsfds"
+    },
+    {
+        "name": "godpghkml;",
+        "description": "jgbhjj",
         "room": "cabin-666",
-        "priority": "medium",
-        "assignedTo": "user-1"
+        "priority": "medium"
+    },
+    {
+        "name": "godpghkml;",
+        "description": "jgbhjj",
+        "room": "cabin-666",
+        "priority": "medium"
+    },
+    {
+        "name": "dsdfsd",
+        "description": "fdsfdsf",
+        "room": "theft-at-the-morgue",
+        "priority": "low"
+    },
+    {
+        "name": "fsdfdsfs",
+        "description": "fsdgfdgfd",
+        "room": "cabin-666",
+        "priority": "medium"
+    },
+    {
+        "name": "godpghkml;",
+        "description": "jgbhjj",
+        "room": "the-wizard-school",
+        "priority": "medium"
+    },
+    {
+        "name": "godpghkml;",
+        "description": "jgbhjj",
+        "room": "the-wizard-school",
+        "priority": "medium"
+    },
+    {
+        "name": "godpghkml;",
+        "description": "jgbhjj",
+        "room": "the-wizard-school",
+        "priority": "medium"
+    },
+    {
+        "name": "godpghkml;",
+        "description": "jgbhjj",
+        "room": "the-wizard-school",
+        "priority": "medium"
+    },
+    {
+        "name": "godpghkml;",
+        "description": "jgbhjj",
+        "room": "the-wizard-school",
+        "priority": "medium"
+    },
+    {
+        "name": "godpghkml;",
+        "description": "jgbhjj",
+        "room": "the-wizard-school",
+        "priority": "medium"
+    },
+    {
+        "name": "godpghkml;",
+        "description": "jgbhjj",
+        "room": "the-wizard-school",
+        "priority": "high"
     }
 ]

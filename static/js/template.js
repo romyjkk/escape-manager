@@ -2,6 +2,9 @@
 
 const createIssueButton = document.getElementById("createIssue");
 const createIssuePopup = document.getElementById("createIssueContainer");
+const createIssueNameInput = document.getElementById("issueName");
+const createIssueDescriptionInput = document.getElementById("issueDescription");
+const deleteIssueButton = document.getElementById("deleteIssue");
 const createIssueRoomSelectButton = document.getElementById(
   "createIssueRoomSelectButton"
 );
@@ -25,6 +28,8 @@ const createIssueSubmitButton = document.getElementById(
 );
 // global variables
 
+let createIssueName;
+let createIssueDescription;
 let createIssueSelectedRoom;
 let createIssueSelectedPriority;
 let createIssueSelectedAssignedTo;
@@ -49,25 +54,54 @@ createIssueSelectPriorityButton.addEventListener("click", () => {
 createIssueAssignedToButton.addEventListener("click", () => {
   createIssueFetchUserData();
 });
+
+deleteIssueButton.addEventListener("click", () => {
+  resetForms();
+});
+
 createIssueSubmitButton.addEventListener("click", () => {
+  createIssueName = createIssueNameInput.value;
+  createIssueDescription = createIssueDescriptionInput.value;
+
+  if (
+    !createIssueName ||
+    !createIssueSelectedRoom ||
+    !createIssueSelectedPriority
+  ) {
+    alert("Please fill in all required fields");
+    return;
+  }
+
   $.ajax({
     type: "POST",
     url: "/create_issue",
     contentType: "application/json",
     data: JSON.stringify({
+      name: createIssueName,
+      description: createIssueDescription,
       room: createIssueSelectedRoom,
       priority: createIssueSelectedPriority,
       assignedTo: createIssueSelectedAssignedTo,
-      title: "whatever",
     }),
     success: function (response) {
       console.log("Issue created successfully:", response);
-      createIssueContainer.classList.remove("visible");
-      createIssueContainer.classList.add("invisible");
+      resetForms();
     },
   });
 });
+
 // fetch data from json for create issue popup
+function resetForms() {
+  // Reset the form fields
+  createIssueNameInput.value = "";
+  createIssueDescriptionInput.value = "";
+  createIssueRoomSelectButtonImg.src = "../static/img/plusButton.svg";
+  createIssueSelectPriorityButtonImg.src =
+    "../static/img/priority/priority.svg";
+  createIssueAssignedToButtonImg.src = "../static/img/plusButton.svg";
+  createIssueContainer.classList.remove("visible");
+  createIssueContainer.classList.add("invisible");
+}
 
 function createIssueFetchRoomConfig() {
   $.ajax({
