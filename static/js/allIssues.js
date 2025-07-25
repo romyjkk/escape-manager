@@ -1,5 +1,4 @@
 $(document).ready(function () {
-  let currentEditingIndex = null;
   let configData = null;
 
   // Fetch config data and then fetch issues
@@ -33,6 +32,9 @@ $(document).ready(function () {
       },
     });
   }
+
+  // Make fetchAllIssues available globally
+  window.fetchAllIssues = fetchAllIssues;
 
   function displayAllIssues(issueData) {
     let issueList = document.getElementById("allIssuesList");
@@ -84,53 +86,26 @@ $(document).ready(function () {
   }
 
   function openEditModal(issueIndex, subIssueIndex, issueData) {
-    currentEditingIndex = issueIndex;
+    // Use the global setEditMode function from template.js
+    setEditMode(issueIndex, issueData);
     
-    // Populate the form with current data
-    document.getElementById("issueName").value = issueData.title || issueData.name || "";
-    document.getElementById("issueDescription").value = issueData.description || "";
-    
-    // Handle image if available
-    if (issueData.image) {
-      createIssueImagePath = issueData.image;
-      document.getElementById("previewImg").src = issueData.image;
-      document.getElementById("imagePreview").style.display = "block";
-    } else {
-      document.getElementById("imagePreview").style.display = "none";
-      createIssueImagePath = null;
-    }
-    
-    // Set room if available and update room button icon
-    if (issueData.room && configData && configData.rooms) {
-      createIssueSelectedRoom = issueData.room;
-      updateRoomButtonIcon(issueData.room);
-    }
-    
-    // Set priority if available and update priority button icon
-    if (issueData.priority && configData && configData.priorities) {
-      createIssueSelectedPriority = issueData.priority;
-      updatePriorityButtonIcon(issueData.priority);
-    }
-    
-    // Set assignedTo if available and update assignedTo button icon
-    // Handle both "assignedTo" and "assigned" fields
-    const assignedUser = issueData.assignedTo || issueData.assigned;
-    if (assignedUser && configData && configData.users) {
-      createIssueSelectedAssignedTo = assignedUser;
-      updateAssignedToButtonIcon(assignedUser);
+    // Update button icons if config data is available
+    if (configData) {
+      if (issueData.room) {
+        updateRoomButtonIcon(issueData.room);
+      }
+      if (issueData.priority) {
+        updatePriorityButtonIcon(issueData.priority);
+      }
+      const assignedUser = issueData.assignedTo || issueData.assigned;
+      if (assignedUser) {
+        updateAssignedToButtonIcon(assignedUser);
+      }
     }
     
     // Show the modal
     document.getElementById("createIssueContainer").classList.add("visible");
     document.getElementById("createIssueContainer").classList.remove("invisible");
-
-    // Update submit button to handle editing
-    let submitButton = document.getElementById("createIssueSubmitButton");
-    submitButton.textContent = "Update";
-    
-    // Remove existing click listeners and add new one for updating
-    submitButton.removeEventListener("click", originalSubmitHandler);
-    submitButton.addEventListener("click", handleUpdateIssue);
   }
 
   function updateRoomButtonIcon(roomId) {
@@ -181,105 +156,14 @@ $(document).ready(function () {
     }
   }
 
-  function handleUpdateIssue() {
-    let updatedIssue = {
-      title: document.getElementById("issueName").value || undefined,
-      name: document.getElementById("issueName").value || undefined,
-      description: document.getElementById("issueDescription").value || undefined,
-      room: createIssueSelectedRoom || undefined,
-      priority: createIssueSelectedPriority || undefined,
-      assignedTo: createIssueSelectedAssignedTo || undefined,
-      image: createIssueImagePath || undefined
-    };
-
-    // Remove undefined values
-    Object.keys(updatedIssue).forEach(key => {
-      if (updatedIssue[key] === undefined) {
-        delete updatedIssue[key];
-      }
-    });
-
-    $.ajax({
-      type: "PUT",
-      url: `/update_issue/${currentEditingIndex}`,
-      contentType: "application/json",
-      data: JSON.stringify(updatedIssue),
-      success: function (response) {
-        console.log("Issue updated successfully:", response);
-        resetFormAndModal();
-        fetchAllIssues(); // Refresh the list
-      },
-      error: function (error) {
-        console.log("Error updating issue:", error);
-        alert("Error updating issue");
-      }
-    });
-  }
-
   function resetFormAndModal() {
-    // Reset form
-    document.getElementById("issueName").value = "";
-    document.getElementById("issueDescription").value = "";
-    document.getElementById("issueImageInput").value = "";
-    document.getElementById("imagePreview").style.display = "none";
-    
-    // Reset global variables
-    createIssueSelectedRoom = null;
-    createIssueSelectedPriority = null;
-    createIssueSelectedAssignedTo = null;
-    createIssueImagePath = null;
-    
-    // Reset button images
-    document.querySelector("#createIssueRoomSelectButton img").src = "../static/img/plusButton.svg";
-    document.querySelector("#createIssuePrioritySelectButton img").src = "../static/img/priority/priority.svg";
-    document.querySelector("#createIssueAssignedToButton img").src = "../static/img/plusButton.svg";
-    
-    // Hide modal
-    document.getElementById("createIssueContainer").classList.remove("visible");
-    document.getElementById("createIssueContainer").classList.add("invisible");
-    
-    // Reset submit button
-    let submitButton = document.getElementById("createIssueSubmitButton");
-    submitButton.textContent = "Opslaan";
-    submitButton.removeEventListener("click", handleUpdateIssue);
-    submitButton.addEventListener("click", originalSubmitHandler);
-    
-    currentEditingIndex = null;
+    // Use the global resetForms function from template.js
+    resetForms();
   }
-
-  // Store original submit handler reference
-  let originalSubmitHandler = function() {
-    createIssueName = document.getElementById("issueName").value;
-    createIssueDescription = document.getElementById("issueDescription").value;
-
-    if (!createIssueName || !createIssueSelectedRoom || !createIssueSelectedPriority) {
-      alert("Please fill in all required fields");
-      return;
-    }
-
-    $.ajax({
-      type: "POST",
-      url: "/create_issue",
-      contentType: "application/json",
-      data: JSON.stringify({
-        name: createIssueName,
-        description: createIssueDescription,
-        room: createIssueSelectedRoom,
-        priority: createIssueSelectedPriority,
-        assignedTo: createIssueSelectedAssignedTo,
-        image: createIssueImagePath,
-      }),
-      success: function (response) {
-        console.log("Issue created successfully:", response);
-        resetFormAndModal();
-        fetchAllIssues(); // Refresh the list
-      },
-    });
-  };
 
   // Handle delete functionality
   document.getElementById("deleteIssue").addEventListener("click", function() {
-    if (currentEditingIndex !== null) {
+    if (isEditMode && currentEditingIndex !== null) {
       if (confirm("Are you sure you want to delete this issue?")) {
         $.ajax({
           type: "DELETE",

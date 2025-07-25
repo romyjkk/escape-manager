@@ -38,6 +38,8 @@ let createIssueSelectedRoom;
 let createIssueSelectedPriority;
 let createIssueSelectedAssignedTo;
 let createIssueImagePath = null;
+let isEditMode = false;
+let currentEditingIndex = null;
 
 // create issue popup
 
@@ -167,23 +169,67 @@ createIssueSubmitButton.addEventListener("click", () => {
     return;
   }
 
-  $.ajax({
-    type: "POST",
-    url: "/create_issue",
-    contentType: "application/json",
-    data: JSON.stringify({
+  if (isEditMode && currentEditingIndex !== null) {
+    // Update existing issue
+    let updatedIssue = {
+      title: createIssueName,
       name: createIssueName,
       description: createIssueDescription,
       room: createIssueSelectedRoom,
       priority: createIssueSelectedPriority,
       assignedTo: createIssueSelectedAssignedTo,
       image: createIssueImagePath,
-    }),
-    success: function (response) {
-      console.log("Issue created successfully:", response);
-      resetForms();
-    },
-  });
+    };
+
+    // Remove undefined values
+    Object.keys(updatedIssue).forEach(key => {
+      if (updatedIssue[key] === undefined || updatedIssue[key] === null) {
+        delete updatedIssue[key];
+      }
+    });
+
+    $.ajax({
+      type: "PUT",
+      url: `/update_issue/${currentEditingIndex}`,
+      contentType: "application/json",
+      data: JSON.stringify(updatedIssue),
+      success: function (response) {
+        console.log("Issue updated successfully:", response);
+        resetForms();
+        // Refresh the list if we're on the all-issues page
+        if (typeof window.fetchAllIssues === 'function') {
+          window.fetchAllIssues();
+        }
+      },
+      error: function (error) {
+        console.log("Error updating issue:", error);
+        alert("Error updating issue");
+      }
+    });
+  } else {
+    // Create new issue
+    $.ajax({
+      type: "POST",
+      url: "/create_issue",
+      contentType: "application/json",
+      data: JSON.stringify({
+        name: createIssueName,
+        description: createIssueDescription,
+        room: createIssueSelectedRoom,
+        priority: createIssueSelectedPriority,
+        assignedTo: createIssueSelectedAssignedTo,
+        image: createIssueImagePath,
+      }),
+      success: function (response) {
+        console.log("Issue created successfully:", response);
+        resetForms();
+        // Refresh the list if we're on the all-issues page
+        if (window.location.pathname.includes('/all-issues')) {
+          window.location.reload();
+        }
+      },
+    });
+  }
 });
 
 // fetch data from json for create issue popup
@@ -203,12 +249,42 @@ function resetForms() {
   createIssueSelectedPriority = null;
   createIssueSelectedAssignedTo = null;
   createIssueImagePath = null;
+  isEditMode = false;
+  currentEditingIndex = null;
   
   createIssueContainer.classList.remove("visible");
   createIssueContainer.classList.add("invisible");
   
   // Reset submit button text
   createIssueSubmitButton.textContent = "Opslaan";
+}
+
+// Function to set edit mode - can be called from other scripts
+function setEditMode(issueIndex, issueData) {
+  isEditMode = true;
+  currentEditingIndex = issueIndex;
+  
+  // Populate the form with current data
+  createIssueNameInput.value = issueData.title || issueData.name || "";
+  createIssueDescriptionInput.value = issueData.description || "";
+  
+  // Handle image if available
+  if (issueData.image) {
+    createIssueImagePath = issueData.image;
+    previewImg.src = issueData.image;
+    imagePreview.style.display = "block";
+  } else {
+    imagePreview.style.display = "none";
+    createIssueImagePath = null;
+  }
+  
+  // Set values for dropdowns
+  createIssueSelectedRoom = issueData.room || null;
+  createIssueSelectedPriority = issueData.priority || null;
+  createIssueSelectedAssignedTo = issueData.assignedTo || issueData.assigned || null;
+  
+  // Update submit button text
+  createIssueSubmitButton.textContent = "Update";
 }
 
 function createIssueFetchRoomConfig() {

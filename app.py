@@ -83,13 +83,18 @@ def create_issue():
     try:
         with open(issuesFile, 'r', encoding='utf-8') as file:
             issues = json.load(file)
-    except FileNotFoundError:
+    except (FileNotFoundError, json.JSONDecodeError):
         issues = []
+    
     print("Creating issue with data:", data)
     issues.append(data)
-    with open(issuesFile, 'w', encoding='utf-8') as file:
-        json.dump(issues, file, ensure_ascii=False, indent=4)
-    return jsonify({"status": "success", "data": data})
+    
+    try:
+        with open(issuesFile, 'w', encoding='utf-8') as file:
+            json.dump(issues, file, ensure_ascii=False, indent=4)
+        return jsonify({"status": "success", "data": data})
+    except Exception as e:
+        return jsonify({"status": "error", "message": f"Error saving issue: {str(e)}"}), 500
 
 @app.route('/update_issue/<int:issue_index>', methods=['PUT'])
 def update_issue(issue_index):
@@ -101,14 +106,29 @@ def update_issue(issue_index):
             issues = json.load(file)
         
         if 0 <= issue_index < len(issues):
-            issues[issue_index] = data
+            # Get the existing issue
+            existing_issue = issues[issue_index]
+            
+            # If existing_issue is not a dict, create a new one
+            if not isinstance(existing_issue, dict):
+                existing_issue = {}
+            
+            # Merge the new data with existing data
+            updated_issue = existing_issue.copy()
+            updated_issue.update(data)
+            
+            # Replace the issue
+            issues[issue_index] = updated_issue
+            
             with open(issuesFile, 'w', encoding='utf-8') as file:
                 json.dump(issues, file, ensure_ascii=False, indent=4)
-            return jsonify({"status": "success", "data": data})
+            return jsonify({"status": "success", "data": updated_issue})
         else:
             return jsonify({"status": "error", "message": "Issue not found"}), 404
     except FileNotFoundError:
         return jsonify({"status": "error", "message": "Issues file not found"}), 404
+    except json.JSONDecodeError as e:
+        return jsonify({"status": "error", "message": f"JSON decode error: {str(e)}"}), 500
 
 @app.route('/delete_issue/<int:issue_index>', methods=['DELETE'])
 def delete_issue(issue_index):
@@ -137,13 +157,18 @@ def delete_issue(issue_index):
             # Remove the issue from the list
             issues.pop(issue_index)
             
-            with open(issuesFile, 'w', encoding='utf-8') as file:
-                json.dump(issues, file, ensure_ascii=False, indent=4)
-            return jsonify({"status": "success", "deleted": deleted_issue})
+            try:
+                with open(issuesFile, 'w', encoding='utf-8') as file:
+                    json.dump(issues, file, ensure_ascii=False, indent=4)
+                return jsonify({"status": "success", "deleted": deleted_issue})
+            except Exception as e:
+                return jsonify({"status": "error", "message": f"Error saving after deletion: {str(e)}"}), 500
         else:
             return jsonify({"status": "error", "message": "Issue not found"}), 404
     except FileNotFoundError:
         return jsonify({"status": "error", "message": "Issues file not found"}), 404
+    except json.JSONDecodeError as e:
+        return jsonify({"status": "error", "message": f"JSON decode error: {str(e)}"}), 500
 
 # load priority
 @app.route('/get_priority')
@@ -164,9 +189,11 @@ def get_issues():
             issues = json.load(file)
             print (issues)
             return jsonify(issues)
-    # if you dont do this and the file doesn't exist, everything crashes
     except FileNotFoundError:
-        return "Issues file not found", 404
+        return jsonify({"error": "Issues file not found"}), 404
+    except json.JSONDecodeError as e:
+        print(f"JSON decode error in issues.json: {e}")
+        return jsonify({"error": f"JSON decode error: {str(e)}"}), 500
 
 # get data from json
 @app.route('/get_room_config')
@@ -237,4 +264,4 @@ def home():
 
 if __name__ == '__main__':
     # run on all IP, run on port 5000
-    app.run(host="0.0.0.0", port=80, debug=True)
+    app.run(host="0.0.0.0", port=80, debug=False)
