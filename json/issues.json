@@ -1,7 +1,7 @@
 [
     {
-        "title": "whatever2",
-        "name": "whatever2"
+        "title": "whatever3",
+        "name": "whatever3"
     },
     {
         "name": "godpghkml;",
@@ -122,6 +122,13 @@
         "room": "infinicorp-laboratory",
         "priority": "low",
         "assignedTo": "user-1",
+        "image": null
+    },
+    {
+        "name": "whatever3",
+        "description": "",
+        "room": "cabin-666",
+        "priority": "low",
         "image": null
     }
 ]

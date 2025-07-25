@@ -1,6 +1,5 @@
 $(document).ready(function () {
   let userDataCopy = [];
-
   // Fetch issue data
   Promise.all([$.get("/get_issues"), $.get("/get_user_config")])
     .then(([issueData, userData]) => {
