@@ -18,7 +18,7 @@ def allowed_file(filename):
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 # issue page, user can see issues for a specific room
-@app.route('/issues', defaults={'room_id': None})
+@app.route('/issues', defaults={'room_id': None}) #idk wat dit is
 
 @app.route('/issues/<room_id>')
 def issues(room_id):
@@ -157,12 +157,27 @@ def get_priority():
         return "Priority file not found", 404
 
 # load issues
-@app.route('/get_issues')
-def get_issues():
+@app.route('/get_issues/<room_id>')
+def get_issues(room_id):
+    """
+    Haalt problemen (issues) op uit een JSON-bestand en filtert deze optioneel op basis van een opgegeven kamer-ID.
+    Args:
+        room_id (str): De ID van de kamer waarvoor de problemen gefilterd moeten worden. Gebruik 'all' om alle problemen op te halen.
+    Returns:
+        Response: Een JSON-response met de gefilterde problemen, of een foutmelding als het bestand niet gevonden wordt.
+    """
+    
     try:
         with open('json/issues.json') as file:
             issues = json.load(file)
-            print (issues)
+            if room_id:
+                # Filter issues by room_id
+                print(f"Filtering issues for room: {room_id}")
+                if room_id == 'all':
+                    print("Fetching all issues")
+                else:
+                    issues = [issue for issue in issues if issue.get('room') == room_id]
+                print(f"Filtered issues: {issues}")
             return jsonify(issues)
     # if you dont do this and the file doesn't exist, everything crashes
     except FileNotFoundError:

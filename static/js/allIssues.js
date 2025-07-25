@@ -1,7 +1,6 @@
 $(document).ready(function () {
   let currentEditingIndex = null;
   let configData = null;
-
   // Fetch config data and then fetch issues
   fetchConfigData();
 
@@ -11,7 +10,8 @@ $(document).ready(function () {
       url: "/get_all_config",
       success: function (data) {
         configData = data;
-        fetchAllIssues();
+        //fetchAllIssues(); // Waarom staat dit hier?
+        console.log(roomIdCheck);
         if (roomIdCheck !== "") {
           fetchRoomSpecificIssues();
         } else {
@@ -30,7 +30,7 @@ $(document).ready(function () {
   function fetchAllIssues() {
     $.ajax({
       type: "GET",
-      url: "/get_issues",
+      url: "/get_issues/all",
       success: function (issueData) {
         displayAllIssues(issueData);
       },
@@ -41,7 +41,6 @@ $(document).ready(function () {
   }
 
   function fetchRoomSpecificIssues() {
-    console.log("You're currently in a room");
     $.ajax({
       type: "GET",
       url: "/get_issues/",
@@ -57,7 +56,7 @@ $(document).ready(function () {
   function displayRoomSpecificIssues(issueData) {
     let roomSpecificIssueList = document.getElementById("issueCards");
     roomSpecificIssueList.innerHTML = ""; // Clear existing content
-
+    console.log("Displaying room-specific issues:", issueData); //Deze heb ik voor debugging toegevoegd
     issueData.forEach((issue, index) => {
       if (!issue || typeof issue !== "object") {
         return;
@@ -65,7 +64,7 @@ $(document).ready(function () {
     });
   }
 
-  displayRoomSpecificIssues();
+  displayRoomSpecificIssues(); // <- Deze moet weg. Deze zorgt voor je "foreach is not a function" error
 
   function displayAllIssues(issueData) {
     let issueList = document.getElementById("allIssuesList");
