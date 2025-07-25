@@ -122,7 +122,7 @@ issue_data['dateCreated'] = datetime.datetime.now().isoformat() # BELANGRIJK, di
 3. **Frontend daarna**: Als de backend werkt, debug je JavaScript
 4. **Stap voor stap**: Fix één error tegelijk, niet alles tegelijk
 
-## Als alles werkt, dan verder met:
+## Algemeen advies:
 1. **Start klein**: Voeg één filter toe (bijv. prioriteit)
 2. **JSON eerst**: Test je filter logica met statische data
 3. **Frontend dan backend**: Maak eerst de UI, dan de Python API
