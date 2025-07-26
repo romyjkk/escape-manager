@@ -10,7 +10,6 @@ $(document).ready(function () {
       url: "/get_all_config",
       success: function (data) {
         configData = data;
-        //fetchAllIssues(); // Waarom staat dit hier?
         console.log(roomIdCheck);
         if (roomIdCheck !== "") {
           fetchRoomSpecificIssues();
@@ -43,9 +42,13 @@ $(document).ready(function () {
   function fetchRoomSpecificIssues() {
     $.ajax({
       type: "GET",
-      url: "/get_issues/",
-      succes: function (issueData) {
-        displayRoomSpecificIssues(issueData);
+      url: `/get_issues/${roomIdCheck}`,
+      success: function (filteredIssueData) {
+        displayRoomSpecificIssues(filteredIssueData);
+        console.log(
+          "Room specific issues fetched successfully: ",
+          filteredIssueData
+        );
       },
       error: function (error) {
         console.log("Error fetching room-specific issues:", error);
@@ -53,18 +56,45 @@ $(document).ready(function () {
     });
   }
 
-  function displayRoomSpecificIssues(issueData) {
+  function displayRoomSpecificIssues(filteredIssueData) {
     let roomSpecificIssueList = document.getElementById("issueCards");
     roomSpecificIssueList.innerHTML = ""; // Clear existing content
-    console.log("Displaying room-specific issues:", issueData); //Deze heb ik voor debugging toegevoegd
-    issueData.forEach((issue, index) => {
+    // console.log("Displaying room-specific issues:", filteredIssueData); //Deze heb ik voor debugging toegevoegd
+
+    filteredIssueData.forEach((issue) => {
       if (!issue || typeof issue !== "object") {
         return;
       }
+
+      let roomSpecificIssueItem = document.createElement("li");
+
+      let roomSpecificTitleText = "";
+      let roomSpecificDescriptionText = "";
+      let roomSpecificRoomText = "";
+      let roomSpecificPriorityText = "";
+
+      roomSpecificTitleText = issue.title || issue.name || "Untitled Issue";
+      roomSpecificDescriptionText = issue.description || "No description";
+
+      if (issue.room) {
+        roomSpecificRoomText = issue.room
+          .replace(/-/g, " ")
+          .replace(/\b\w/g, (l) => l.toUpperCase());
+      } else {
+        roomSpecificRoomText = "No room specified";
+      }
+
+      roomSpecificPriorityText = issue.priority || "No priority";
+
+      roomSpecificIssueItem.innerHTML = `
+        <strong>${roomSpecificTitleText}</strong>
+        <p>${roomSpecificDescriptionText}</p>
+        <p>${roomSpecificRoomText}</p>
+        <p>${roomSpecificPriorityText}</p>`;
+
+      roomSpecificIssueList.appendChild(roomSpecificIssueItem);
     });
   }
-
-  displayRoomSpecificIssues(); // <- Deze moet weg. Deze zorgt voor je "foreach is not a function" error
 
   function displayAllIssues(issueData) {
     let issueList = document.getElementById("allIssuesList");
