@@ -2,73 +2,129 @@
 
 ## Wat werkt er al?
 
-- Issues per kamer weergeven (`/issues/<room_id>`) - **NOG KAPOT!**
+- Issues per kamer weergeven (`/issues/<room_id>`)
 - Alle issues overzicht (`/issues/all-issues`) - grotendeels
 - Basis issue weergave met afbeeldingen
 - JSON data opslag voor issues, configuratie en gebruikers
 
-## Wat er nog kapot is (en hoe je het kan aanpakken)
+## Update: Issues per kamer werkt nu!
+Supa dupa, hoe moet je filteren?
 
-### Issues per kamer werkt niet
+## Volgende uitdaging: Sorteren & Filteren
 
-Je krijgt deze errors en dat komt omdat:
+### De HTML is er al! 
+De ui heb je zelf al gemaakt, deze radio buttons kun je gebruiken om de filtering te maken.
 
-**Error 1: `Cannot read properties of undefined (reading 'forEach')`**
+### JavaScript Sort Functies (gebruik deze in allIssues.js)
 
-- Je JavaScript verwacht data, maar krijgt `undefined`
-- Check in `allIssues.js` regel 47 en 61 en 67: waarschijnlijk krijg je geen data terug van de server/en of geef je niet de juiste arguments mee.
-- **Tip**: Voeg `console.log(issueData)` toe om te zien wat je daadwerkelijk krijgt
-
-**Error 2: `Failed to load resource: /get_issues/ 404 NOT FOUND`**
-
-- De server route bestaat niet of werkt niet
-- Hieronder heb ik dit probleem in meer detail uitgeschreven.
-- **Tip**: Check of die route überhaupt bestaat, en of die wel de juiste JSON teruggeeft
-
-### Hoe dit te fixen (zonder dat ik het voor je doe <3)
-
-1. **Backend eerst**: Zorg dat `/get_issues` route werkt in `app.py` Je boft, ik heb de backend al aangepast zodat ie voor je filtert op kamer, kijk even naar `get_issues(room_id)`.
-2. **Test de route**: Ga naar `127.0.0.1/get_issues` in je browser - krijg je JSON terug?
-3. **Frontend debuggen**: Gebruik `console.log()` overal om te zien wat er gebeurt
-4. **HTML checken**: Kijk of je template de juiste HTML elementen heeft
-
-## Suggesties voor verdere ontwikkeling (als alles eenmaal werkt)
-
-### 1. Filteren per Kamer
-
-Het systeem heeft al basis room filtering, maar dit kan beter:
-
-**In `static/js/allIssues.js`:**
-
+**Basis sort setup:**
 ```javascript
-// Voeg een dropdown toe voor kamer selectie
-function createRoomFilter() {
-  const rooms = [...new Set(issueData.map((issue) => issue.room))];
-  // Genereer dropdown opties dynamisch
+// Deze geef ik je mee, ik kan me voorstellen dat dit moeilijk is om zelf te maken.
+document.querySelectorAll('input[name="sort"]').forEach(radio => { // Selecteer alle inputs met id "sort", daarna itereren over elke radio knop.
+  radio.addEventListener('change', (e) => { //Luister naar change
+    const sortType = e.target.closest('li').getAttribute('value'); //Vergelijk die "li" met de value van die li.
+    sortIssues(currentIssues, sortType); //Sort functie. Deze mag je zelf maken.
+  });
+});
+
+// Hoofdsort functie
+function sortIssues(issues, sortType) {
+  let sortedIssues = [...issues]; // Hiermee kopieer je de array zonder hem te refereren. Dit is handig om niet de originele data aan te passen per ongeluk.
+  
+  switch(sortType) {
+    case 'priorityHighToLow':
+      // Sorteren.
+      break;
+    case 'priorityLowToHigh':
+      // Sorteren.
+      break;
+    case 'newToOld':
+      // Sorteren
+      break;
+    case 'oldToNew':
+      // Sorteren.
+      break;
+  }
+  
+  // Update de display
+  redisplayIssues(sortedIssues);
 }
 ```
 
-**Python kant (`app.py`):**
+### Prioriteit Sorteren
+Hoe kun je sorteren?
+```javascript
+sortedIssues.sort((a, b) => getPriorityValue(a.priority) - getPriorityValue(b.priority));
+// Dit is de functie die je nodig hebt om issues te sorteren op prioriteit. Deze functie iterateert over de prioriteit van de issues en geeft een numerieke waarde terug die gebruikt wordt om te sorteren. Als de uitkomst negatief is, dan komt issue a voor issue b in de gesorteerde lijst.
+// Als de uitkomst positief is, dan komt issue b voor issue a in de gesorteerde lijst.
+// De rest kun je vast zelf maken, dit is de basis.
+// Hieronder zie je een voorbeeld van "getPriorityValue" functie die je kan gebruiken. Hierbij wordt de prioriteit omgezet naar een numerieke waarde, zodat je kunt sorteren op basis van die waarde.
+// Quiz vraag: De "sort" hierboven, sorteert die van laag naar hoog, of van hoog naar laag? En waarom?
+```
 
-- Gebruik de /issues/room_id route om je issues op te halen, je kan ze het beste filteren bij de frontend.
-- Uiteraard kan het ook uit de backend, maar dan moet je python schrijven :3
+**Helper functie voor prioriteit:**
+```javascript
+function getPriorityValue(priority) {
+  const values = { 'high': 3, 'medium': 2, 'low': 1 };
+  return values[priority] || 0;
+}
+```
 
-### 2. Geavanceerd Filteren (voor later)
+### Filter Checkboxes Setup
 
-Implementeer filters voor datum, belangrijkheid en toegewezen persoon:
-
-**Frontend filter systeem:**
+**Voor de checkboxes (priority, createdBy, etc.):**
+Checkboxes kun je vast zelf maken in html, dat red jij wel <3. Maar hier is de JavaScript code die je nodig hebt om de checkboxes te laten werken:
 
 ```javascript
-// In allIssues.js
-function applyFilters(issues, filters) {
-  return issues.filter((issue) => {
-    // Filter op datum: issue.dateCreated
-    // Filter op prioriteit: issue.priority
-    // Filter op toegewezen: issue.assigned
+document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+  checkbox.addEventListener('change', () => {
+    filterIssues(); // Deze functie moet je zelf maken, die filtert de issues op basis van de geselecteerde checkboxes.
+  });
+});
+```
+### Array Methods die je Nodig Hebt
+
+**Voor filteren:**
+```javascript
+// Filter op basis van geselecteerde opties
+function filterIssues(issues, filters) {
+  return issues.filter(issue => {
+    if (filters.priority.length > 0 && !filters.priority.includes(issue.priority)) { // Hier filter je op prioriteit. Is de prioriteit van de issue niet in de geselecteerde prioriteiten, dan wordt de issue niet getoond. 
+    // "filters.priority" is een array van geselecteerde prioriteiten, en "issue.priority" is de prioriteit van de huidige issue.
+      return false;
+    }
+    
+    return true; // Deze issue voldoet aan alle filters
   });
 }
 ```
+
+**Handy Array methods:**
+- `.sort()` - voor sorteren
+- `.filter()` - voor filteren  
+- `.map()` - voor data transformatie
+- `.find()` - 1 item vinden
+- `.includes()` - checken of waarde in array zit
+
+### Debugging Tips voor Filters
+1. **Console.log alles**: `console.log('Sorting by:', sortType)`
+2. **Test stap voor stap**: Eerst sorteren werkend krijgen, dan filteren
+3. **Check je data**: Hebben je issues wel de juiste velden?
+4. **Event listeners**: Gebruik browser dev tools om te checken of ze aangeroepen worden
+
+### Wat Werkt vs Wat Nog Moet
+- ✅ Room filtering (goed gedaan!)
+- ❌ Priority sorting - **DIT IS VOLGENDE STAP**
+- ❌ Date sorting - komt daarna
+- ❌ Filter checkboxes - als sorting werkt
+
+Start met priority sorting - dat is het makkelijkst om te testen!
+
+## Suggesties voor verdere ontwikkeling (als alles eenmaal werkt)
+
+### 2. Geavanceerd Filteren (voor later)
+
+Implementeer filters voor datum, belangrijkheid en toegewezen persoon. Check hierboven voor de basis setup.
 
 **HTML template aanpassingen:**
 
