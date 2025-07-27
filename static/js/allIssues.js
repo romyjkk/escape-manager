@@ -1,7 +1,7 @@
 $(document).ready(function () {
   let currentEditingIndex = null;
   let configData = null;
-  let issueData = [];
+  let issueDataGlobal = [];
 
   const sortPanel = document.getElementById("sortBy");
   const sortPanelButton = document.getElementById("sortButton");
@@ -89,10 +89,12 @@ $(document).ready(function () {
   }
 
   function displayAllIssues(issueData) {
+    issueDataGlobal = issueData; // Store globally for sorting and filtering
     let issueList = document.getElementById("allIssuesList");
     issueList.innerHTML = ""; // Clear existing content
 
     issueData.forEach((issue, index) => {
+      console.log("Displaying all issues:", issueData);
       // Skip empty objects
       if (!issue || typeof issue !== "object") {
         return;
@@ -418,7 +420,8 @@ $(document).ready(function () {
   });
 
   function sortIssues(sortType) {
-    let sortedIssues = [...issueData];
+    let sortedIssues = [...issueDataGlobal];
+    console.log(issueDataGlobal);
 
     switch (sortType) {
       case "priorityHighToLow":
@@ -455,10 +458,10 @@ $(document).ready(function () {
 
     function redisplayIssues(sortedIssues) {
       console.log("Redisplaying issues:", sortedIssues);
-      let issueList = document.getElementById("issueCards");
+      let issueList = document.getElementById("allIssuesList");
       issueList.innerHTML = ""; // Clear existing content
 
-      displayRoomSpecificIssues(sortedIssues);
+      displayAllIssues(sortedIssues);
     }
 
     redisplayIssues(sortedIssues);

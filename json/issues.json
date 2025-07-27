@@ -7,12 +7,10 @@
         "priority": "low"
     },
     {
+        "title": "Test morgue",
         "name": "Test morgue",
-        "description": "",
         "room": "theft-at-the-morgue",
-        "priority": "low",
-        "image": null,
-        "dateCreated": "2025-07-27T15:26:39.475183"
+        "priority": "high"
     },
     {
         "name": "Cabin test",
