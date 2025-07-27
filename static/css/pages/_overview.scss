@@ -1,14 +1,29 @@
-#issueCards {
+#allIssuesList {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
   li {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     background-color: var(--tertiaryBackgroundColor);
     padding: 1rem;
+    border-radius: 0.2rem;
+    box-shadow: var(--boxShadow);
+    cursor: pointer;
+    height: 10.5rem;
     .textWrapper {
       display: flex;
       flex-direction: column;
       gap: 0.2rem;
+    }
+    .imgWrapper {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      // p {
+      //   width: fit-content;
+      // }
     }
     .infoWrapper {
       display: flex;

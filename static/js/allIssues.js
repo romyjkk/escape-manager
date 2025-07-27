@@ -124,10 +124,14 @@ $(document).ready(function () {
       priorityText = issue.priority || "No priority";
       // Still has to be styled properly, you can remove this anytime @romyjkk
       issueItem.innerHTML = `
-        <strong>${titleText}</strong><br>
-        <small>${descriptionText}</small><br>
-        <small>Room: ${roomText}</small><br>
-        <small>Priority: ${priorityText}</small>
+        <article class="textWrapper">
+          <h2>${titleText}</h2>
+          <p>${descriptionText}</p>
+        </article>
+        <article class="imgWrapper">
+          <p>${roomText}</p>
+          <p>${priorityText}</p>
+        </article>
       `;
 
       // Store the index for editing. IMPORTANT.

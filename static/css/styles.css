@@ -104,6 +104,11 @@ h1 {
   font-weight: 500;
 }
 
+h2 {
+  font-size: 1.4rem;
+  font-weight: 600;
+}
+
 h3 {
   font-size: 1.2rem;
   font-weight: 500;
@@ -379,36 +384,50 @@ footer nav a:last-of-type div {
   justify-content: space-between;
 }
 
-#issueCards li {
+#allIssuesList {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+#allIssuesList li {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   background-color: var(--tertiaryBackgroundColor);
   padding: 1rem;
+  border-radius: 0.2rem;
+  box-shadow: var(--boxShadow);
+  cursor: pointer;
+  height: 10.5rem;
 }
-#issueCards li .textWrapper {
+#allIssuesList li .textWrapper {
   display: flex;
   flex-direction: column;
   gap: 0.2rem;
 }
-#issueCards li .infoWrapper {
+#allIssuesList li .imgWrapper {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
 }
-#issueCards li .infoWrapper .imgAndStatusWrapper {
+#allIssuesList li .infoWrapper {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+#allIssuesList li .infoWrapper .imgAndStatusWrapper {
   display: flex;
   flex-direction: row;
   gap: 0.5rem;
 }
-#issueCards li .infoWrapper .imgAndStatusWrapper img {
+#allIssuesList li .infoWrapper .imgAndStatusWrapper img {
   width: 100%;
 }
-#issueCards li .infoWrapper .priorityAndAssignedWrapper {
+#allIssuesList li .infoWrapper .priorityAndAssignedWrapper {
   display: flex;
   flex-direction: row;
   gap: 0.5rem;
 }
-#issueCards li .infoWrapper .priorityAndAssignedWrapper img {
+#allIssuesList li .infoWrapper .priorityAndAssignedWrapper img {
   width: 100%;
 }/*# sourceMappingURL=styles.css.map */
