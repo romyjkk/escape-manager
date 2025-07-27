@@ -146,8 +146,8 @@ button {
   width: fit-content;
 }
 
-#createIssueSubmitButton {
-  display: flex;
+#createIssueSubmitButton,
+#updateIssueButton {
   justify-content: center;
   align-items: center;
   font-size: 1.2rem;
@@ -323,8 +323,6 @@ footer nav a:last-of-type div {
 }
 #filterPanel #filterAndSort fieldset #filterAndSortContainer #sort > ul,
 #filterPanel #filterAndSort fieldset #filterAndSortContainer #filter > ul {
-  display: flex;
-  flex-direction: column;
   gap: 1rem;
   position: absolute;
   background-color: var(--tertiaryBackgroundColor);
@@ -340,23 +338,6 @@ footer nav a:last-of-type div {
   justify-content: space-between;
   align-items: center;
 }
-#filterPanel #filterAndSort fieldset #filterAndSortContainer #sort > ul > li input[type=radio],
-#filterPanel #filterAndSort fieldset #filterAndSortContainer #filter > ul > li input[type=radio] {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 1.5rem;
-  height: 1.5rem;
-  background-color: var(--tertiaryBackgroundColor);
-  border: 1px solid var(--primaryTextColor);
-  border-radius: 1rem;
-}
-#filterPanel #filterAndSort fieldset #filterAndSortContainer #sort {
-  display: none;
-}
-#filterPanel #filterAndSort fieldset #filterAndSortContainer #filter {
-  display: none;
-}
-
 #createIssueContainer {
   position: fixed;
   height: 100%;

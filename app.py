@@ -3,6 +3,7 @@ import json
 import os
 from werkzeug.utils import secure_filename
 import uuid
+import datetime
 app = Flask(__name__)
 
 # Configure upload settings
@@ -85,6 +86,7 @@ def create_issue():
             issues = json.load(file)
     except FileNotFoundError:
         issues = []
+    data['dateCreated'] = datetime.datetime.now().isoformat()
     print("Creating issue with data:", data)
     issues.append(data)
     with open(issuesFile, 'w', encoding='utf-8') as file:

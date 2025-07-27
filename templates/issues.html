@@ -21,8 +21,8 @@
                 <p id="sortedText" class="text-md">Lorem ipsum</p>
                 <div id="filterAndSortContainer">
                     <div id="sort">
-                        <button><img src="../static/img/icons/sort.svg"></button>
-                        <ul id="sortBy">
+                        <button type="button" id="sortButton"><img src="../static/img/icons/sort.svg"></button>
+                        <ul id="sortBy" class="invisible">
                             <li value="priorityHighToLow">
                                 <p>Prioriteit hoog naar laag</p>
                                 <input type="radio" name="sort" />
@@ -43,8 +43,8 @@
                     </div>
 
                     <div id="filter">
-                            <button><img src="../static/img/icons/filter.svg"></button>
-                            <ul id="filterBy">
+                            <button type="button" id="filterButton"><img src="../static/img/icons/filter.svg"></button>
+                            <ul id="filterBy" class="invisible">
                                 <li value="room">
                                     <p>Kamer</p>
                                     <ul>
@@ -135,7 +135,7 @@
         <!-- sorteren & filtreren -->
         <!-- filters -->
 
-        <ul id="issueCards">
+        <ul id="allIssuesList">
         </ul>
 
     </main>

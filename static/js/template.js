@@ -44,6 +44,9 @@ let createIssueImagePath = null;
 // eventListeners for buttons
 
 createIssueButton.addEventListener("click", () => {
+  const updateButton = document.getElementById("updateIssueButton");
+  updateButton.classList.add("invisible");
+
   createIssueContainer.classList.add("visible");
   createIssueContainer.classList.remove("invisible");
 });
@@ -75,17 +78,17 @@ removeImageButton.addEventListener("click", () => {
       url: "/delete_issue_image",
       contentType: "application/json",
       data: JSON.stringify({
-        imagePath: createIssueImagePath
+        imagePath: createIssueImagePath,
       }),
-      success: function(response) {
+      success: function (response) {
         console.log("Image deleted from server:", response);
       },
-      error: function(error) {
+      error: function (error) {
         console.log("Error deleting image from server:", error);
-      }
+      },
     });
   }
-  
+
   // Reset the form state
   createIssueImagePath = null;
   createIssueImageInput.value = "";
@@ -97,10 +100,10 @@ function handleImageUpload(event) {
   if (file) {
     // If there was a previous image, delete it from the server
     const previousImagePath = createIssueImagePath;
-    
+
     // Show preview immediately
     const reader = new FileReader();
-    reader.onload = function(e) {
+    reader.onload = function (e) {
       previewImg.src = e.target.result;
       imagePreview.style.display = "block";
     };
@@ -108,7 +111,7 @@ function handleImageUpload(event) {
 
     // Upload the file
     const formData = new FormData();
-    formData.append('file', file);
+    formData.append("file", file);
 
     $.ajax({
       type: "POST",
@@ -116,7 +119,7 @@ function handleImageUpload(event) {
       data: formData,
       processData: false,
       contentType: false,
-      success: function(response) {
+      success: function (response) {
         if (response.success) {
           // Delete the previous image if it exists
           if (previousImagePath) {
@@ -125,17 +128,23 @@ function handleImageUpload(event) {
               url: "/delete_issue_image",
               contentType: "application/json",
               data: JSON.stringify({
-                imagePath: previousImagePath
+                imagePath: previousImagePath,
               }),
-              success: function(deleteResponse) {
-                console.log("Previous image deleted from server:", deleteResponse);
+              success: function (deleteResponse) {
+                console.log(
+                  "Previous image deleted from server:",
+                  deleteResponse
+                );
               },
-              error: function(error) {
-                console.log("Error deleting previous image from server:", error);
-              }
+              error: function (error) {
+                console.log(
+                  "Error deleting previous image from server:",
+                  error
+                );
+              },
             });
           }
-          
+
           createIssueImagePath = response.imagePath;
           console.log("Image uploaded successfully:", response.imagePath);
         } else {
@@ -144,12 +153,12 @@ function handleImageUpload(event) {
           imagePreview.style.display = "none";
         }
       },
-      error: function(error) {
+      error: function (error) {
         console.log("Error uploading image:", error);
         alert("Error uploading image");
         createIssueImageInput.value = "";
         imagePreview.style.display = "none";
-      }
+      },
     });
   }
 }
@@ -197,18 +206,18 @@ function resetForms() {
   createIssueSelectPriorityButtonImg.src =
     "../static/img/priority/priority.svg";
   createIssueAssignedToButtonImg.src = "../static/img/plusButton.svg";
-  
+
   // Reset global variables
   createIssueSelectedRoom = null;
   createIssueSelectedPriority = null;
   createIssueSelectedAssignedTo = null;
   createIssueImagePath = null;
-  
+
   createIssueContainer.classList.remove("visible");
   createIssueContainer.classList.add("invisible");
-  
+
   // Reset submit button text
-  createIssueSubmitButton.textContent = "Opslaan";
+  // createIssueSubmitButton.textContent = "Opslaan";
 }
 
 function createIssueFetchRoomConfig() {

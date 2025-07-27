@@ -1,6 +1,25 @@
 $(document).ready(function () {
   let currentEditingIndex = null;
   let configData = null;
+  let issueData = [];
+
+  const sortPanel = document.getElementById("sortBy");
+  const sortPanelButton = document.getElementById("sortButton");
+  const filterPanel = document.getElementById("filterBy");
+  const filterPanelButton = document.getElementById("filterButton");
+
+  // open and close sort and filter panels
+
+  if (sortPanelButton) {
+    sortPanelButton.addEventListener("click", () => {
+      sortPanel.classList.toggle("invisible");
+    });
+
+    filterPanelButton.addEventListener("click", () => {
+      filterPanel.classList.toggle("invisible");
+    });
+  }
+
   // Fetch config data and then fetch issues
   fetchConfigData();
 
@@ -27,16 +46,29 @@ $(document).ready(function () {
   }
 
   function fetchAllIssues() {
-    $.ajax({
-      type: "GET",
-      url: "/get_issues/all",
-      success: function (issueData) {
-        displayAllIssues(issueData);
-      },
-      error: function (error) {
-        console.log("Error fetching issues:", error);
-      },
-    });
+    if (roomIdCheck !== "") {
+      $.ajax({
+        type: "GET",
+        url: `/get_issues/${roomIdCheck}`,
+        success: function (issueData) {
+          displayAllIssues(issueData);
+        },
+        error: function (error) {
+          console.log("Error fetching issues:", error);
+        },
+      });
+    } else {
+      $.ajax({
+        type: "GET",
+        url: `/get_issues/all`,
+        success: function (issueData) {
+          displayAllIssues(issueData);
+        },
+        error: function (error) {
+          console.log("Error fetching issues:", error);
+        },
+      });
+    }
   }
 
   function fetchRoomSpecificIssues() {
@@ -44,7 +76,7 @@ $(document).ready(function () {
       type: "GET",
       url: `/get_issues/${roomIdCheck}`,
       success: function (filteredIssueData) {
-        displayRoomSpecificIssues(filteredIssueData);
+        displayAllIssues(filteredIssueData);
         console.log(
           "Room specific issues fetched successfully: ",
           filteredIssueData
@@ -53,46 +85,6 @@ $(document).ready(function () {
       error: function (error) {
         console.log("Error fetching room-specific issues:", error);
       },
-    });
-  }
-
-  function displayRoomSpecificIssues(filteredIssueData) {
-    let roomSpecificIssueList = document.getElementById("issueCards");
-    roomSpecificIssueList.innerHTML = ""; // Clear existing content
-    // console.log("Displaying room-specific issues:", filteredIssueData); //Deze heb ik voor debugging toegevoegd
-
-    filteredIssueData.forEach((issue) => {
-      if (!issue || typeof issue !== "object") {
-        return;
-      }
-
-      let roomSpecificIssueItem = document.createElement("li");
-
-      let roomSpecificTitleText = "";
-      let roomSpecificDescriptionText = "";
-      let roomSpecificRoomText = "";
-      let roomSpecificPriorityText = "";
-
-      roomSpecificTitleText = issue.title || issue.name || "Untitled Issue";
-      roomSpecificDescriptionText = issue.description || "No description";
-
-      if (issue.room) {
-        roomSpecificRoomText = issue.room
-          .replace(/-/g, " ")
-          .replace(/\b\w/g, (l) => l.toUpperCase());
-      } else {
-        roomSpecificRoomText = "No room specified";
-      }
-
-      roomSpecificPriorityText = issue.priority || "No priority";
-
-      roomSpecificIssueItem.innerHTML = `
-        <strong>${roomSpecificTitleText}</strong>
-        <p>${roomSpecificDescriptionText}</p>
-        <p>${roomSpecificRoomText}</p>
-        <p>${roomSpecificPriorityText}</p>`;
-
-      roomSpecificIssueList.appendChild(roomSpecificIssueItem);
     });
   }
 
@@ -140,16 +132,22 @@ $(document).ready(function () {
       issueItem.dataset.issueIndex = index;
 
       issueItem.addEventListener("click", function () {
-        openEditModal(index, null, issue);
+        openEditModal(index, issue);
       });
 
       issueList.appendChild(issueItem);
     });
   }
 
-  function openEditModal(issueIndex, subIssueIndex, issueData) {
-    currentEditingIndex = issueIndex;
+  function openEditModal(issueIndex, issueData) {
+    const createIssueButton = document.getElementById(
+      "createIssueSubmitButton"
+    );
 
+    createIssueButton.classList.add("invisible");
+
+    currentEditingIndex = issueIndex;
+    console.log(issueIndex, issueData);
     // Populate the form with current data
     document.getElementById("issueName").value =
       issueData.title || issueData.name || "";
@@ -193,12 +191,13 @@ $(document).ready(function () {
       .classList.remove("invisible");
 
     // Update submit button to handle editing
-    let submitButton = document.getElementById("createIssueSubmitButton");
-    submitButton.textContent = "Update";
-
+    let updateButton = document.getElementById("updateIssueButton");
     // Remove existing click listeners and add new one for updating
-    submitButton.removeEventListener("click", originalSubmitHandler);
-    submitButton.addEventListener("click", handleUpdateIssue);
+    updateButton.removeEventListener("click", originalSubmitHandler);
+    updateButton.addEventListener("click", () => {
+      console.log("Update button clicked");
+      handleUpdateIssue();
+    });
   }
 
   function updateRoomButtonIcon(roomId) {
@@ -253,6 +252,7 @@ $(document).ready(function () {
   }
 
   function handleUpdateIssue() {
+    console.log("Updating issue...");
     let updatedIssue = {
       title: document.getElementById("issueName").value || undefined,
       name: document.getElementById("issueName").value || undefined,
@@ -314,10 +314,9 @@ $(document).ready(function () {
     document.getElementById("createIssueContainer").classList.add("invisible");
 
     // Reset submit button
-    let submitButton = document.getElementById("createIssueSubmitButton");
-    submitButton.textContent = "Opslaan";
-    submitButton.removeEventListener("click", handleUpdateIssue);
-    submitButton.addEventListener("click", originalSubmitHandler);
+    let updateButton = document.getElementById("updateIssueButton");
+    updateButton.removeEventListener("click", handleUpdateIssue);
+    updateButton.addEventListener("click", originalSubmitHandler);
 
     currentEditingIndex = null;
   }
@@ -326,6 +325,7 @@ $(document).ready(function () {
   let originalSubmitHandler = function () {
     createIssueName = document.getElementById("issueName").value;
     createIssueDescription = document.getElementById("issueDescription").value;
+    console.log("Creating issue...");
 
     if (
       !createIssueName ||
@@ -407,4 +407,60 @@ $(document).ready(function () {
       document.getElementById("issueImageInput").value = "";
       document.getElementById("imagePreview").style.display = "none";
     });
+
+  // filter and sort logic
+
+  document.querySelectorAll(`input[name="sort"`).forEach((radio) => {
+    radio.addEventListener("change", (e) => {
+      const sortType = e.target.closest("li").getAttribute("value");
+      sortIssues(sortType);
+    });
+  });
+
+  function sortIssues(sortType) {
+    let sortedIssues = [...issueData];
+
+    switch (sortType) {
+      case "priorityHighToLow":
+        sortedIssues.sort(
+          (a, b) => getPriorityValue(b.priority) - getPriorityValue(a.priority)
+        );
+        break;
+      case "priorityLowToHigh":
+        sortedIssues.sort(
+          (a, b) => getPriorityValue(a.priority) - getPriorityValue(b.priority)
+        ); // low to high because if result is positive, b goes in front of a in the list
+        break;
+      case "newToOld":
+        sortedIssues.sort(
+          (a, b) => getDateValue(b.dateCreated) - getDateValue(a.dateCreated)
+        );
+        break;
+      case "oldToNew":
+        sortedIssues.sort(
+          (a, b) => getDateValue(a.dateCreated) - getDateValue(b.dateCreated)
+        );
+        break;
+    }
+
+    function getPriorityValue(priority) {
+      const values = { high: 3, medium: 2, low: 1 };
+      return values[priority] || 0;
+    }
+
+    function getDateValue(dateCreated) {
+      let formatedDate = new Date(dateCreated);
+      console.log(formatedDate.getTime());
+    }
+
+    function redisplayIssues(sortedIssues) {
+      console.log("Redisplaying issues:", sortedIssues);
+      let issueList = document.getElementById("issueCards");
+      issueList.innerHTML = ""; // Clear existing content
+
+      displayRoomSpecificIssues(sortedIssues);
+    }
+
+    redisplayIssues(sortedIssues);
+  }
 });
