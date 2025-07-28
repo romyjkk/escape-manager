@@ -191,6 +191,7 @@ createIssueSubmitButton.addEventListener("click", () => {
     success: function (response) {
       console.log("Issue created successfully:", response);
       resetForms();
+      fetchAllIssues(); // Refresh the issue data after creation
     },
   });
 });
