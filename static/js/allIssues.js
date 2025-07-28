@@ -1,9 +1,8 @@
 $(document).ready(function () {
-  // Fetch config data and then fetch issues
   fetchConfigData();
 });
 
-console.log("allIssues.js works");
+let initSort = false;
 let currentEditingIndex = null;
 let configData = null;
 let issueDataGlobal = [];
@@ -31,7 +30,6 @@ function fetchConfigData() {
     url: "/get_all_config",
     success: function (data) {
       configData = data;
-      console.log(roomIdCheck);
       if (roomIdCheck !== "") {
         fetchRoomSpecificIssues();
       } else {
@@ -79,10 +77,6 @@ function fetchRoomSpecificIssues() {
     url: `/get_issues/${roomIdCheck}`,
     success: function (filteredIssueData) {
       displayAllIssues(filteredIssueData);
-      console.log(
-        "Room specific issues fetched successfully: ",
-        filteredIssueData
-      );
     },
     error: function (error) {
       console.log("Error fetching room-specific issues:", error);
@@ -92,11 +86,17 @@ function fetchRoomSpecificIssues() {
 
 function displayAllIssues(issueData) {
   issueDataGlobal = issueData; // Store globally for sorting and filtering
+
+  if (!initSort) {
+    initSort = true;
+    sortIssues("priorityHighToLow");
+    return;
+  }
+
   let issueList = document.getElementById("allIssuesList");
   issueList.innerHTML = ""; // Clear existing content
 
   issueData.forEach((issue, index) => {
-    console.log("Displaying all issues:", issueData);
     // Skip empty objects
     if (!issue || typeof issue !== "object") {
       return;
@@ -413,6 +413,8 @@ document
 
 // filter and sort logic
 
+// standard should be: priority high to low
+
 document.querySelectorAll(`input[name="sort"`).forEach((radio) => {
   radio.addEventListener("change", (e) => {
     const sortType = e.target.closest("li").getAttribute("value");
@@ -420,30 +422,43 @@ document.querySelectorAll(`input[name="sort"`).forEach((radio) => {
   });
 });
 
+function redisplayIssues(sortedIssues) {
+  let issueList = document.getElementById("allIssuesList");
+  issueList.innerHTML = ""; // Clear existing content
+
+  // const issuesToDisplay = sortedIssues || issueDataGlobal;
+  displayAllIssues(sortedIssues);
+}
+
 function sortIssues(sortType) {
+  console.log(sortType);
   let sortedIssues = [...issueDataGlobal];
-  console.log(issueDataGlobal);
+  let sortedText = document.getElementById("sortedText");
 
   switch (sortType) {
     case "priorityHighToLow":
       sortedIssues.sort(
         (a, b) => getPriorityValue(b.priority) - getPriorityValue(a.priority)
       );
+      sortedText.innerHTML = "Hoog naar lage prioriteit";
       break;
     case "priorityLowToHigh":
       sortedIssues.sort(
         (a, b) => getPriorityValue(a.priority) - getPriorityValue(b.priority)
       ); // low to high because if result is positive, b goes in front of a in the list
+      sortedText.innerHTML = "Laag naar hoge prioriteit";
       break;
     case "newToOld":
       sortedIssues.sort(
         (a, b) => getDateValue(b.dateCreated) - getDateValue(a.dateCreated)
       );
+      sortedText.innerHTML = "Datum nieuw naar oud";
       break;
     case "oldToNew":
       sortedIssues.sort(
         (a, b) => getDateValue(a.dateCreated) - getDateValue(b.dateCreated)
       );
+      sortedText.innerHTML = "Datum oud naar nieuw";
       break;
   }
 
@@ -454,15 +469,7 @@ function sortIssues(sortType) {
 
   function getDateValue(dateCreated) {
     let formatedDate = new Date(dateCreated);
-    console.log(formatedDate.getTime());
-  }
-
-  function redisplayIssues(sortedIssues) {
-    console.log("Redisplaying issues:", sortedIssues);
-    let issueList = document.getElementById("allIssuesList");
-    issueList.innerHTML = ""; // Clear existing content
-
-    displayAllIssues(sortedIssues);
+    return formatedDate.getTime();
   }
 
   redisplayIssues(sortedIssues);
