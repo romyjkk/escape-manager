@@ -33,6 +33,7 @@ function fetchConfigData() {
       if (roomIdCheck !== "") {
         fetchRoomSpecificIssues();
       } else {
+        initSort = false;
         fetchAllIssues();
         console.log("You're currently not in a room");
       }
@@ -40,6 +41,7 @@ function fetchConfigData() {
     error: function (error) {
       console.log("Error fetching config data:", error);
       // Fallback to fetch issues without config
+      initSort = false;
       fetchAllIssues();
     },
   });
@@ -51,6 +53,7 @@ function fetchAllIssues() {
       type: "GET",
       url: `/get_issues/${roomIdCheck}`,
       success: function (issueData) {
+        initSort = false;
         displayAllIssues(issueData);
       },
       error: function (error) {
@@ -62,6 +65,7 @@ function fetchAllIssues() {
       type: "GET",
       url: `/get_issues/all`,
       success: function (issueData) {
+        initSort = false;
         displayAllIssues(issueData);
       },
       error: function (error) {
@@ -87,6 +91,7 @@ function fetchRoomSpecificIssues() {
 function displayAllIssues(issueData) {
   issueDataGlobal = issueData; // Store globally for sorting and filtering
 
+  console.log(initSort);
   if (!initSort) {
     initSort = true;
     sortIssues("priorityHighToLow");
@@ -282,6 +287,7 @@ function handleUpdateIssue() {
     success: function (response) {
       console.log("Issue updated successfully:", response);
       resetFormAndModal();
+      initSort = false;
       fetchAllIssues(); // Refresh the list
     },
     error: function (error) {
@@ -354,6 +360,7 @@ let originalSubmitHandler = function () {
     success: function (response) {
       console.log("Issue created successfully:", response);
       resetFormAndModal();
+      initSort = false;
       fetchAllIssues(); // Refresh the list
     },
   });
@@ -369,6 +376,7 @@ document.getElementById("deleteIssue").addEventListener("click", function () {
         success: function (response) {
           console.log("Issue deleted successfully:", response);
           resetFormAndModal();
+          initSort = false;
           fetchAllIssues(); // Refresh the list
         },
         error: function (error) {
