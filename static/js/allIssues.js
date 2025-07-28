@@ -1,5 +1,6 @@
 $(document).ready(function () {
   fetchConfigData();
+  populateFilterOptions();
 });
 
 let initSort = false;
@@ -421,9 +422,9 @@ document
 
 // filter and sort logic
 
-// standard should be: priority high to low
+// filtering
 
-document.querySelectorAll(`input[name="sort"`).forEach((radio) => {
+document.querySelectorAll(`input[name="sort"]`).forEach((radio) => {
   radio.addEventListener("change", (e) => {
     const sortType = e.target.closest("li").getAttribute("value");
     sortIssues(sortType);
@@ -434,8 +435,8 @@ function redisplayIssues(sortedIssues) {
   let issueList = document.getElementById("allIssuesList");
   issueList.innerHTML = ""; // Clear existing content
 
-  // const issuesToDisplay = sortedIssues || issueDataGlobal;
-  displayAllIssues(sortedIssues);
+  const issuesToDisplay = sortedIssues || issueDataGlobal;
+  displayAllIssues(issuesToDisplay);
 }
 
 function sortIssues(sortType) {
@@ -481,4 +482,95 @@ function sortIssues(sortType) {
   }
 
   redisplayIssues(sortedIssues);
+}
+
+// sorting
+
+document.querySelectorAll(`input[type="checkbox"]`).forEach((checkbox) => {
+  checkbox.addEventListener("change", () => {
+    applyAllFilters(); // hoofdfunctie voor filters
+  });
+});
+
+function getSelectedFilters() {
+  return {
+    priority: getCheckedValues("priority"),
+    room: getCheckedValues("room"),
+    assignedTo: getCheckedValues("assignedTo"),
+    createdBy: getCheckedValues("createdBy"),
+  };
+}
+
+function getCheckedValues(name) {
+  return Array.from(
+    document.querySelectorAll(`input[name="${name}"]:checked`)
+  ).map((checkbox) => checkbox.value);
+  // .map() -> voor data transformatie
+}
+
+// .sort() -> voor sorteren
+// .filter() -> voor filteren
+// .find() -> 1 item vinden
+// .includes() -> checken of waarde in array zit
+
+function applyAllFilters() {
+  const filters = getSelectedFilters();
+  let filteredIssues = currentIssues.filter((issue) => {
+    if (
+      filters.priority.length > 0 &&
+      !filters.priority.includes(issue.priority)
+    ) {
+      return false;
+    }
+
+    if (filters.room.length > 0 && !filters.room.includes(issue.room)) {
+      return false;
+    }
+
+    if (
+      filters.assignedTo.length > 0 &&
+      !filters.assignedTo.includes(issue.assignedTo)
+    ) {
+      return false;
+    }
+
+    if (
+      filters.createdBy.length > 0 &&
+      !filters.createdBy.includes(issue.createdBy)
+    ) {
+    }
+
+    return true; // issue voldoet aan alle filters
+  });
+
+  redisplayIssues(filteredIssues);
+}
+
+function populateFilterOptions() {
+  fetch(`/get_room_config`)
+    .then((response) => response.json())
+    .then((rooms) => {
+      const availableRooms = rooms[0].availableRooms;
+
+      console.log(availableRooms);
+      const roomFilter = document.getElementById("roomFilterOptions");
+      availableRooms.forEach((room) => {
+        const listItem = document.createElement("li");
+        listItem.innerHTML = `<input type="checkbox" name="room" value="${room.room}"><p>${room.room}</p>`;
+        roomFilter.appendChild(listItem);
+      });
+    });
+
+  fetch("/get_user_config")
+    .then((response) => response.json())
+    .then((users) => {
+      const availableUsers = users[0].availableUsers;
+      console.log(availableUsers);
+      const userFilter = document.getElementById("assignedToFilterOptions");
+      availableUsers.forEach((user) => {
+        const listItem = document.createElement("li");
+        listItem.innerHTML = `<input type="checkbox" name="assignedTo" value="${user.name}"><p>${user.name}</p>`;
+        userFilter.appendChild(listItem);
+      });
+    });
 }
