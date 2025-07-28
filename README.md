@@ -1,159 +1,162 @@
 # Escape Room Manager - Volgende Stappen
 
-## Wat werkt er al?
 
-- Issues per kamer weergeven (`/issues/<room_id>`)
-- Alle issues overzicht (`/issues/all-issues`) - grotendeels
-- Basis issue weergave met afbeeldingen
-- JSON data opslag voor issues, configuratie en gebruikers
+## Wat Werkt vs Wat Nog Moet
+-  Room filtering (goed gedaan!)
+-  Priority sorting (nice!)
+-  Date sorting (ook gelukt!)
+-  Filter checkboxes - **DIT IS VOLGENDE STAP**
 
-## Update: Issues per kamer werkt nu!
-Supa dupa, hoe moet je filteren?
+## Volgende Challenge: Filter Checkboxes Implementation
 
-## Volgende uitdaging: Sorteren & Filteren
+Nu het sorteren werkt, is het tijd voor de echte filtering! Je hebt 4 soorten filters nodig:
 
-### De HTML is er al! 
-De ui heb je zelf al gemaakt, deze radio buttons kun je gebruiken om de filtering te maken.
+### 1. Filter Types die je moet implementeren:
+- **Kamer filter**: Issues van specifieke kamers tonen
+- **Prioriteit filter**: High/Medium/Low priority issues
+- **Assigned To filter**: Issues toegewezen aan specifieke personen  
+- **Created By filter**: Issues gemaakt door specifieke gebruikers
 
-### JavaScript Sort Functies (gebruik deze in allIssues.js)
+### 2. Checkbox Setup Strategie:
 
-**Basis sort setup:**
-```javascript
-// Deze geef ik je mee, ik kan me voorstellen dat dit moeilijk is om zelf te maken.
-document.querySelectorAll('input[name="sort"]').forEach(radio => { // Selecteer alle inputs met id "sort", daarna itereren over elke radio knop.
-  radio.addEventListener('change', (e) => { //Luister naar change
-    const sortType = e.target.closest('li').getAttribute('value'); //Vergelijk die "li" met de value van die li.
-    sortIssues(currentIssues, sortType); //Sort functie. Deze mag je zelf maken.
-  });
-});
+**HTML structuur (voeg toe aan allIssues.html):**
+```html
+<div class="filter-section">
+  <h3>Filter op Prioriteit</h3>
+  <label><input type="checkbox" name="priority" value="high"> High</label>
+  <label><input type="checkbox" name="priority" value="medium"> Medium</label>
+  <label><input type="checkbox" name="priority" value="low"> Low</label>
+</div>
 
-// Hoofdsort functie
-function sortIssues(issues, sortType) {
-  let sortedIssues = [...issues]; // Hiermee kopieer je de array zonder hem te refereren. Dit is handig om niet de originele data aan te passen per ongeluk.
-  
-  switch(sortType) {
-    case 'priorityHighToLow':
-      // Sorteren.
-      break;
-    case 'priorityLowToHigh':
-      // Sorteren.
-      break;
-    case 'newToOld':
-      // Sorteren
-      break;
-    case 'oldToNew':
-      // Sorteren.
-      break;
-  }
-  
-  // Update de display
-  redisplayIssues(sortedIssues);
-}
+<div class="filter-section">
+  <h3>Filter op Kamer</h3>
+  <!-- Dynamisch laden van kamers uit JSON -->
+</div>
+
+<div class="filter-section">
+  <h3>Filter op Toegewezen aan</h3>
+  <!-- Dynamisch laden van gebruikers -->
+</div>
+
+<div class="filter-section">
+  <h3>Filter op Gemaakt door</h3>
+  <!-- Dynamisch laden van gebruikers -->
+</div>
 ```
 
-### Prioriteit Sorteren
-Hoe kun je sorteren?
+### 3. JavaScript Filter Logic:
+
+**Stap 1: Event Listeners voor alle checkboxes**
 ```javascript
-sortedIssues.sort((a, b) => getPriorityValue(a.priority) - getPriorityValue(b.priority));
-// Dit is de functie die je nodig hebt om issues te sorteren op prioriteit. Deze functie iterateert over de prioriteit van de issues en geeft een numerieke waarde terug die gebruikt wordt om te sorteren. Als de uitkomst negatief is, dan komt issue a voor issue b in de gesorteerde lijst.
-// Als de uitkomst positief is, dan komt issue b voor issue a in de gesorteerde lijst.
-// De rest kun je vast zelf maken, dit is de basis.
-// Hieronder zie je een voorbeeld van "getPriorityValue" functie die je kan gebruiken. Hierbij wordt de prioriteit omgezet naar een numerieke waarde, zodat je kunt sorteren op basis van die waarde.
-// Quiz vraag: De "sort" hierboven, sorteert die van laag naar hoog, of van hoog naar laag? En waarom?
-```
-
-**Helper functie voor prioriteit:**
-```javascript
-function getPriorityValue(priority) {
-  const values = { 'high': 3, 'medium': 2, 'low': 1 };
-  return values[priority] || 0;
-}
-```
-
-### Filter Checkboxes Setup
-
-**Voor de checkboxes (priority, createdBy, etc.):**
-Checkboxes kun je vast zelf maken in html, dat red jij wel <3. Maar hier is de JavaScript code die je nodig hebt om de checkboxes te laten werken:
-
-```javascript
-document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => { // Jij bent echt een sexy monster, godverdomme wat lekker.
   checkbox.addEventListener('change', () => {
-    filterIssues(); // Deze functie moet je zelf maken, die filtert de issues op basis van de geselecteerde checkboxes.
+    applyAllFilters(); // Hoofdfunctie die alle filters toepast.
   });
 });
 ```
-### Array Methods die je Nodig Hebt
 
-**Voor filteren:**
+**Stap 2: Verzamel geselecteerde filters**
 ```javascript
-// Filter op basis van geselecteerde opties
-function filterIssues(issues, filters) {
-  return issues.filter(issue => {
-    if (filters.priority.length > 0 && !filters.priority.includes(issue.priority)) { // Hier filter je op prioriteit. Is de prioriteit van de issue niet in de geselecteerde prioriteiten, dan wordt de issue niet getoond. 
-    // "filters.priority" is een array van geselecteerde prioriteiten, en "issue.priority" is de prioriteit van de huidige issue.
+function getSelectedFilters() {
+  return {
+    priority: getCheckedValues('priority'),
+    room: getCheckedValues('room'), 
+    assignedTo: getCheckedValues('assignedTo'),
+    createdBy: getCheckedValues('createdBy')
+  };
+}
+
+function getCheckedValues(name) {
+  return Array.from(document.querySelectorAll(`input[name="${name}"]:checked`))
+    .map(checkbox => checkbox.value);
+}
+```
+
+**Stap 3: Filter logica toepassen**
+```javascript
+function applyAllFilters() {
+  const filters = getSelectedFilters();
+  let filteredIssues = currentIssues.filter(issue => {  //.filter is een briljante method om op bepaalde dingen te filteren, in dit geval doen we dat op 4 verschillende manieren.
+    
+    if (filters.priority.length > 0 && !filters.priority.includes(issue.priority)) {
       return false;
     }
     
-    return true; // Deze issue voldoet aan alle filters
+    if (filters.room.length > 0 && !filters.room.includes(issue.room)) {
+      return false;
+    }
+    
+    if (filters.assignedTo.length > 0 && !filters.assignedTo.includes(issue.assignedTo)) {
+      return false;
+    }
+    
+    if (filters.createdBy.length > 0 && !filters.createdBy.includes(issue.createdBy)) { // Er is nog geen "createdBy" in de json. Dit moet nog wel gemaakt worden. Dit kan nog niet want we hebben geen inlog. Dus doe het even manually.
+      return false;
+    }
+    
+    return true; // Issue voldoet aan alle filters
   });
+  
+  redisplayIssues(filteredIssues);
 }
 ```
 
-**Handy Array methods:**
-- `.sort()` - voor sorteren
-- `.filter()` - voor filteren  
-- `.map()` - voor data transformatie
-- `.find()` - 1 item vinden
-- `.includes()` - checken of waarde in array zit
+### 4. Dynamische Filter Options Laden:
 
-### Debugging Tips voor Filters
-1. **Console.log alles**: `console.log('Sorting by:', sortType)`
-2. **Test stap voor stap**: Eerst sorteren werkend krijgen, dan filteren
-3. **Check je data**: Hebben je issues wel de juiste velden?
-4. **Event listeners**: Gebruik browser dev tools om te checken of ze aangeroepen worden
+**Voor kamers en gebruikers uit JSON:**
+```javascript
+function populateFilterOptions() {
+  // Laad kamers uit JSON
+  fetch('/get_rooms')
+    .then(response => response.json())
+    .then(rooms => {
+      const roomFilter = document.querySelector('whatever je hier nodig hebt');
+      rooms.forEach(room => {
+        const label = document.createElement('label');
+        label.innerHTML = `<input type="checkbox" name="room" value="${room}"`; // dit weet ik niet zeker
+        roomFilter.appendChild(label);
+      });
+    });
 
-### Wat Werkt vs Wat Nog Moet
-- ✅ Room filtering (goed gedaan!)
-- ❌ Priority sorting - **DIT IS VOLGENDE STAP**
-- ❌ Date sorting - komt daarna
-- ❌ Filter checkboxes - als sorting werkt
+  // Laad gebruikers uit JSON
+  fetch('/get_users')
+    .then(response => response.json())
+    .then(users => {
+      const userFilter = document.querySelectorAll('zelfde als hierboven, geen idee');
+      userFilter.forEach((section, index) => {
+        users.forEach(user => {
+          const label = document.createElement('label');
+          label.innerHTML = `<input type="checkbox" value="${user}"`; // Dit weet ik niet zeker
+          section.appendChild(label);
+        });
+      });
+    });
+}
+```
+### 5. Pro Tips voor Implementation:
 
-Start met priority sorting - dat is het makkelijkst om te testen!
+**Debugging aanpak:**
+1. Start met 1 filter type (bijv. priority)
+2. Console.log je filter results: `console.log('Filtered issues:', filteredIssues)`
+3. Test met verschillende combinaties
+4. Voeg de andere filter types één voor één toe
+
+
+**Reset functionaliteit:**
+```javascript
+function clearAllFilters() {
+  document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
+  redisplayIssues(currentIssues); // Toon alle issues weer
+}
+```
+
+Start met de priority filter - die is het makkelijkst te testen omdat je de data al hebt!
 
 ## Suggesties voor verdere ontwikkeling (als alles eenmaal werkt)
 
 ### 2. Geavanceerd Filteren (voor later)
 
 Implementeer filters voor datum, belangrijkheid en toegewezen persoon. Check hierboven voor de basis setup.
-
-**HTML template aanpassingen:**
-
-- Voeg filter controls toe aan `templates/allIssues.html`
-
-### 3. Datum Functionaliteit
-
-Issues missen momenteel datum tracking:
-
-**JSON structuur uitbreiden:**
-
-```json
-{
-  "name": "Issue naam",
-  "description": "Beschrijving",
-  "room": "cabin-666",
-  "priority": "medium",
-  "dateCreated": "2025-01-26T10:30:00Z",
-  "assignedTo": "gebruiker_id"
-}
-```
-
-**Python backend:**
-
-```python
-# In app.py - voeg datum toe bij nieuwe issues
-import datetime
-issue_data['dateCreated'] = datetime.datetime.now().isoformat() # BELANGRIJK, dit is de juiste manier van het maken van dates! Daarover gesproken, when date? <3
-```
 
 ## Technische Tips
 
