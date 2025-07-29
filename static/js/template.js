@@ -47,6 +47,22 @@ createIssueButton.addEventListener("click", () => {
   const updateButton = document.getElementById("updateIssueButton");
   updateButton.classList.add("invisible");
 
+  // Check if user is logged in
+  const userSession = localStorage.getItem('userSession');
+  const createIssueCreatedBy = document.getElementById('createIssueCreatedBy');
+  const currentUserName = document.getElementById('currentUserName');
+  
+  if (userSession) {
+    const user = JSON.parse(userSession);
+    currentUserName.textContent = user.username;
+    createIssueCreatedBy.style.display = 'block';
+  } else {
+    // User is not logged in, redirect to auth page
+    showWarning('You must be logged in to create issues. Please login first.');
+    window.location.href = '/auth';
+    return;
+  }
+
   createIssueContainer.classList.add("visible");
   createIssueContainer.classList.remove("invisible");
 });
@@ -148,14 +164,14 @@ function handleImageUpload(event) {
           createIssueImagePath = response.imagePath;
           console.log("Image uploaded successfully:", response.imagePath);
         } else {
-          alert("Error uploading image: " + response.error);
+          showError("Error uploading image: " + response.error);
           createIssueImageInput.value = "";
           imagePreview.style.display = "none";
         }
       },
       error: function (error) {
         console.log("Error uploading image:", error);
-        alert("Error uploading image");
+        showError("Error uploading image");
         createIssueImageInput.value = "";
         imagePreview.style.display = "none";
       },
@@ -172,7 +188,7 @@ createIssueSubmitButton.addEventListener("click", () => {
     !createIssueSelectedRoom ||
     !createIssueSelectedPriority
   ) {
-    alert("Please fill in all required fields");
+    showWarning("Please fill in all required fields");
     return;
   }
 
@@ -194,6 +210,19 @@ createIssueSubmitButton.addEventListener("click", () => {
       initSort = false;
       fetchAllIssues(); // Refresh the issue data after creation
     },
+    error: function (xhr) {
+      // xhr is een XMLHttpRequest object, hiermee kunnen we de status en response van de server bekijken. 
+      if (xhr.status === 401) {
+        showError("You must be logged in to create issues. Please login first.");
+        // Redirect to auth page
+        window.location.href = "/auth";
+      } else if (xhr.status === 404) {
+        showError("User not found. Please login again.");
+        window.location.href = "/auth";
+      } else {
+        showError("An error occurred while creating the issue. Please try again.");
+      }
+    }
   });
 });
 
@@ -423,9 +452,9 @@ class Navigation {
     } else if (this.url.includes("/inventory")) {
       this.inventoryNavItem.classList.add("navigationItemActive");
       this.inventoryNavImg.src = "../static/img/icons/inventoryFilled.svg";
-    } else if (this.url.includes("/profile")) {
+    } else if (this.url.includes("/auth") || this.url.includes("/admin") || this.url.includes("/profile")) {
       this.profileNavItem.classList.add("navigationItemActive");
-      this.profileNavImg.src = "../static/img/icons/profileFilled.svg";
+      this.profileNavImg.src = "../static/img/icons/accountFilled.svg";
     } else if (this.url.includes("/")) {
       this.homeNavItem.classList.add("navigationItemActive");
       this.homeNavImg.src = "../static/img/icons/homeFilled.svg";
@@ -434,3 +463,110 @@ class Navigation {
 }
 
 let navigation = new Navigation();
+
+// Custom Notification System
+function showNotification(message, type = 'info', duration = 4000) {
+  const container = document.getElementById('notificationContainer');
+  if (!container) return;
+
+  // Create notification element
+  const notification = document.createElement('div');
+  notification.className = `notification ${type}`;
+
+  // Create notification content
+  const content = document.createElement('div');
+  content.className = 'notification-content';
+
+  // Add icon based on type
+  const icon = document.createElement('div');
+  icon.className = 'notification-icon';
+  let iconSymbol = '';
+  switch(type) {
+    case 'success':
+      iconSymbol = '✓';
+      break;
+    case 'error':
+      iconSymbol = '✕';
+      break;
+    case 'warning':
+      iconSymbol = '⚠';
+      break;
+    default:
+      iconSymbol = 'ℹ';
+  }
+  icon.textContent = iconSymbol;
+  icon.style.fontSize = '1.6rem';
+  icon.style.fontWeight = 'bold';
+  icon.style.color = type === 'success' ? '#28a745' : 
+                   type === 'error' ? '#dc3545' : 
+                   type === 'warning' ? '#ffc107' : 
+                   'var(--secundaryBackgroundColor500)';
+
+  // Add message
+  const messageEl = document.createElement('div');
+  messageEl.className = 'notification-message';
+  messageEl.textContent = message;
+
+  // Add close button
+  const closeBtn = document.createElement('button');
+  closeBtn.className = 'notification-close';
+  closeBtn.innerHTML = '×';
+  closeBtn.onclick = () => hideNotification(notification);
+
+  // Assemble notification
+  content.appendChild(icon);
+  content.appendChild(messageEl);
+  content.appendChild(closeBtn);
+  notification.appendChild(content);
+
+  // Add to container
+  container.appendChild(notification);
+
+  // Show with animation
+  setTimeout(() => notification.classList.add('show'), 100);
+
+  // Auto hide
+  setTimeout(() => hideNotification(notification), duration);
+
+  return notification;
+}
+
+function hideNotification(notification) {
+  notification.classList.remove('show');
+  setTimeout(() => {
+    if (notification.parentNode) {
+      notification.parentNode.removeChild(notification);
+    }
+  }, 300);
+}
+
+// Replace all alert calls with custom notifications
+window.alert = function(message) {
+  showNotification(message, 'info');
+};
+
+// Add custom notification methods to window for easy access
+window.showSuccess = function(message) {
+  showNotification(message, 'success');
+};
+
+window.showError = function(message) {
+  showNotification(message, 'error');
+};
+
+window.showWarning = function(message) {
+  showNotification(message, 'warning');
+};
+
+window.showInfo = function(message) {
+  showNotification(message, 'info');
+};
+
+// Handle profile button click for login/register
+const profileButton = document.getElementById("profile");
+if (profileButton) {
+  profileButton.addEventListener("click", (e) => {
+    e.preventDefault();
+    window.location.href = "/auth";
+  });
+}

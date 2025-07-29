@@ -130,11 +130,21 @@ function displayAllIssues(issueData) {
     }
 
     priorityText = issue.priority || "No priority";
+    
+    // Get created by information
+    let createdByText = "";
+    if (issue.createdBy && issue.createdBy.username) {
+      createdByText = `Created by: ${issue.createdBy.username}`;
+    } else {
+      createdByText = "Creator unknown";
+    }
+    
     // Still has to be styled properly, you can remove this anytime @romyjkk
     issueItem.innerHTML = `
         <article class="textWrapper">
           <h2>${titleText}</h2>
           <p>${descriptionText}</p>
+          <p style="font-size: 1rem; color: var(--secundaryBackgroundColor600); font-style: italic;">${createdByText}</p>
         </article>
         <article class="imgWrapper">
           <p>${roomText}</p>
@@ -293,7 +303,7 @@ function handleUpdateIssue() {
     },
     error: function (error) {
       console.log("Error updating issue:", error);
-      alert("Error updating issue");
+      showError("Error updating issue");
     },
   });
 }
@@ -342,7 +352,7 @@ let originalSubmitHandler = function () {
     !createIssueSelectedRoom ||
     !createIssueSelectedPriority
   ) {
-    alert("Please fill in all required fields");
+    showWarning("Please fill in all required fields");
     return;
   }
 
@@ -382,7 +392,7 @@ document.getElementById("deleteIssue").addEventListener("click", function () {
         },
         error: function (error) {
           console.log("Error deleting issue:", error);
-          alert("Error deleting issue");
+          showError("Error deleting issue");
         },
       });
     }

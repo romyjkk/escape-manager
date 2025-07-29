@@ -1,0 +1,44 @@
+{% extends "template.html" %}
+
+{% block pageTitle %}
+    Login
+{% endblock %}
+
+{% block content %}
+<main>
+    <div id="authContainer">
+        <form id="loginForm" class="authForm">
+            <h2>Login</h2>
+            <div class="inputGroup">
+                <label for="loginUsername">Username:</label>
+                <input type="text" id="loginUsername" name="username" required>
+            </div>
+            <div class="inputGroup">
+                <label for="loginPassword">Password:</label>
+                <input type="password" id="loginPassword" name="password" required>
+            </div>
+            <button type="submit" class="authButton">Login</button>
+            <p class="authInfo">
+                Default admin account: <strong>admin</strong> / <strong>admin</strong><br>
+                New accounts can only be created by admins or managers.
+            </p>
+        </form>
+
+        <div id="profileView" class="invisible">
+            <h2>Profile</h2>
+            <div id="userInfo">
+                <h3 id="userName"></h3>
+                <p id="userRole"></p>
+            </div>
+            <div id="profileActions">
+                <button id="adminPanelButton" class="authButton invisible">Admin Panel</button>
+                <button id="logoutButton" class="authButton">Logout</button>
+            </div>
+        </div>
+    </div>
+</main>
+{% endblock %}
+
+{% block scripts %}
+    <script src="{{ url_for('static', filename='js/auth.js') }}"></script>
+{% endblock %}

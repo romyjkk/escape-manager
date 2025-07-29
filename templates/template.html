@@ -30,6 +30,9 @@
         </ul>
     </header>
 
+    <!-- Custom Notification System -->
+    <div id="notificationContainer" class="notification-container"></div>
+
     {% block content %}
     {% endblock %}
 
@@ -70,6 +73,11 @@
                     </button>
                     <ul id="createIssueAssignedToOptions"></ul>
                 </div>
+            </div>
+            <div id="createIssueCreatedBy" class="createIssueCreatedBy" style="display: none;">
+                <p style="font-size: 1rem; color: var(--secundaryBackgroundColor700); text-align: center; margin: 0.5rem 0;">
+                    Creating as: <span id="currentUserName"></span>
+                </p>
             </div>
             <button type="button" id="createIssueSubmitButton">
                 Opslaan

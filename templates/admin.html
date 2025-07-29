@@ -1,0 +1,73 @@
+{% extends "template.html" %}
+
+{% block pageTitle %}
+    Admin Panel
+{% endblock %}
+
+{% block content %}
+<main>
+    <div id="adminContainer">
+        <!-- User Management Section -->
+        <section id="userManagement">
+            <h2>User Management</h2>
+            
+            <!-- Create New User Form -->
+            <div id="createUserSection">
+                <h3>Create New Account</h3>
+                <form id="createUserForm">
+                    <div class="inputGroup">
+                        <label for="newUsername">Username:</label>
+                        <input type="text" id="newUsername" name="username" required>
+                    </div>
+                    <div class="inputGroup">
+                        <label for="newPassword">Password:</label>
+                        <input type="password" id="newPassword" name="password" required>
+                    </div>
+                    <div class="inputGroup">
+                        <label for="newRole">Role:</label>
+                        <select id="newRole" name="role" required>
+                            <option value="">Select Role</option>
+                            <option value="manager">Manager</option>
+                            <option value="host">Host</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="adminButton">Create Account</button>
+                </form>
+            </div>
+
+            <!-- Users List -->
+            <div id="usersListSection">
+                <h3>Existing Users</h3>
+                <div id="usersTableContainer">
+                    <table id="usersTable">
+                        <thead>
+                            <tr>
+                                <th>Username</th>
+                                <th>Role</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="usersTableBody">
+                            <!-- Users will be populated here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- Profile Section -->
+        <section id="adminProfile">
+            <h2>Your Profile</h2>
+            <div id="currentUserInfo">
+                <p><strong>Username:</strong> <span id="currentAdminUsername"></span></p>
+                <p><strong>Role:</strong> <span id="currentAdminRole"></span></p>
+            </div>
+            <button id="logoutButton" class="adminButton">Logout</button>
+        </section>
+    </div>
+</main>
+{% endblock %}
+
+{% block scripts %}
+    <script src="{{ url_for('static', filename='js/admin.js') }}"></script>
+{% endblock %}

@@ -12,6 +12,8 @@
 @use "components/popups";
 
 @use "pages/overview";
+@use "pages/auth";
+@use "pages/admin";
 
 // abstracts : This folder contains all the sass helpers you can create for your project.
 // We create variables, functions and mixins etc. in it.

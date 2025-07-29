@@ -1,0 +1,146 @@
+@use "../abstracts/variables" as *;
+
+#adminContainer {
+  max-width: 80rem;
+  margin: 0 auto;
+  padding: 2rem 0;
+  
+  section {
+    background-color: var(--tertiaryBackgroundColor);
+    margin-bottom: 2rem;
+    padding: 2rem;
+    border-radius: 1rem;
+    box-shadow: var(--boxShadow);
+    
+    h2 {
+      color: var(--primaryTextColor);
+      margin-bottom: 1.5rem;
+      border-bottom: 2px solid var(--secundaryBackgroundColor300);
+      padding-bottom: 0.5rem;
+    }
+    
+    h3 {
+      color: var(--secundaryBackgroundColor700);
+      margin-bottom: 1rem;
+    }
+  }
+}
+
+#createUserSection {
+  margin-bottom: 3rem;
+  
+  #createUserForm {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(25rem, 1fr));
+    gap: 1.5rem;
+    align-items: end;
+    
+    .inputGroup {
+      label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+        color: var(--primaryTextColor);
+      }
+      
+      input, select {
+        width: 100%;
+        padding: 0.8rem;
+        border: 1px solid var(--secundaryBackgroundColor300);
+        border-radius: 0.5rem;
+        font-size: 1.2rem;
+        background-color: var(--primaryBackgroundColor);
+        
+        &:focus {
+          outline: none;
+          border-color: var(--secundaryBackgroundColor500);
+          box-shadow: 0 0 0 2px rgba(29, 92, 150, 0.2);
+        }
+      }
+    }
+  }
+}
+
+.adminButton {
+  padding: 1rem 2rem;
+  background-color: var(--buttonColor500);
+  color: var(--secundaryTextColor);
+  border: none;
+  border-radius: 0.5rem;
+  font-size: 1.2rem;
+  font-weight: 500;
+  cursor: pointer;
+  
+  &:hover {
+    background-color: var(--buttonColor600);
+  }
+}
+
+#usersTableContainer {
+  overflow-x: auto;
+  
+  #usersTable {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+    
+    th, td {
+      padding: 1rem;
+      text-align: left;
+      border-bottom: 1px solid var(--secundaryBackgroundColor300);
+    }
+    
+    th {
+      background-color: var(--secundaryBackgroundColor500);
+      color: var(--secundaryTextColor);
+      font-weight: 600;
+    }
+    
+    tr:nth-child(even) {
+      background-color: var(--primaryBackgroundColor);
+    }
+    
+    tr:hover {
+      background-color: var(--secundaryBackgroundColor100);
+    }
+  }
+}
+
+#adminProfile {
+  #currentUserInfo {
+    margin-bottom: 2rem;
+    
+    p {
+      margin-bottom: 0.5rem;
+      font-size: 1.4rem;
+      
+      strong {
+        color: var(--secundaryBackgroundColor700);
+      }
+      
+      span {
+        color: var(--primaryTextColor);
+        text-transform: capitalize;
+      }
+    }
+  }
+}
+
+// Auth form updates for admin info
+.authInfo {
+  text-align: center;
+  margin-top: 1rem;
+  font-size: 1.1rem;
+  color: var(--secundaryBackgroundColor600);
+  line-height: 1.4;
+  
+  strong {
+    color: var(--buttonColor500);
+  }
+}
+
+#profileActions {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
