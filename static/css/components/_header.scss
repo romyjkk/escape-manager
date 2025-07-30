@@ -9,6 +9,7 @@ header {
   color: var(--secundaryTextColor);
   border-radius: 0 0 2rem 2rem;
   box-shadow: var(--boxShadow);
+  z-index: 1;
   ul {
     display: grid;
     grid-template-columns: repeat(3, 1fr);

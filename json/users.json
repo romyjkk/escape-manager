@@ -4,5 +4,11 @@
         "username": "admin",
         "password": "8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918",
         "role": "admin"
+    },
+    {
+        "id": "user-2",
+        "username": "romyj",
+        "password": "a204831fa97e36b6cc86e1def47413ac5b2c372c2ca051377c6391855bb753d5",
+        "role": "host"
     }
 ]

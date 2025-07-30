@@ -320,6 +320,8 @@ def create_issue():
     # Get user information from session
     user_id = session['user_id']
     users = load_users()
+
+    id = f"{uuid.uuid4().hex}"
     
     # Find the logged-in user
     logged_in_user = None
@@ -343,7 +345,7 @@ def create_issue():
     # Add createdBy and dateCreated to the issue data
     data['createdBy'] = logged_in_user
     data['dateCreated'] = datetime.datetime.now().isoformat()
-    
+    data['id'] = id
     print("Creating issue with data:", data)
     issues.append(data)
     with open(issuesFile, 'w', encoding='utf-8') as file:
@@ -355,15 +357,35 @@ def update_issue(issue_index):
     issuesFile = 'json/issues.json'
     data = request.get_json()
     print("Updating issue at index:", issue_index, "with data:", data)
+    
     try:
         with open(issuesFile, 'r', encoding='utf-8') as file:
             issues = json.load(file)
         
         if 0 <= issue_index < len(issues):
+            # Preserve the original createdBy and dateCreated
+            original_issue = issues[issue_index]
+            original_createdBy = original_issue.get('createdBy')
+            original_dateCreated = original_issue.get('dateCreated')
+            original_id = original_issue.get('id')
+            
+            # Update the issue with new data
             issues[issue_index] = data
+            
+            # Restore the original createdBy and dateCreated
+            if original_createdBy:
+                issues[issue_index]['createdBy'] = original_createdBy
+            if original_dateCreated:
+                issues[issue_index]['dateCreated'] = original_dateCreated
+            if original_id:
+                issues[issue_index]['id'] = original_id
+            
+            # Add lastModified timestamp
+            issues[issue_index]['lastModified'] = datetime.datetime.now().isoformat()
+            
             with open(issuesFile, 'w', encoding='utf-8') as file:
                 json.dump(issues, file, ensure_ascii=False, indent=4)
-            return jsonify({"status": "success", "data": data})
+            return jsonify({"status": "success", "data": issues[issue_index]})
         else:
             return jsonify({"status": "error", "message": "Issue not found"}), 404
     except FileNotFoundError:
@@ -476,7 +498,7 @@ def get_inventory():
 @app.route('/get_user_config')
 def get_user_config():
     try:
-        with open('json/userConfig.json') as file:
+        with open('json/users.json') as file:
             user_config = json.load(file)
             print(user_config)
             return jsonify(user_config)

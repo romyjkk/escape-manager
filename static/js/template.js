@@ -48,18 +48,18 @@ createIssueButton.addEventListener("click", () => {
   updateButton.classList.add("invisible");
 
   // Check if user is logged in
-  const userSession = localStorage.getItem('userSession');
-  const createIssueCreatedBy = document.getElementById('createIssueCreatedBy');
-  const currentUserName = document.getElementById('currentUserName');
-  
+  const userSession = localStorage.getItem("userSession");
+  const createIssueCreatedBy = document.getElementById("createIssueCreatedBy");
+  const currentUserName = document.getElementById("currentUserName");
+
   if (userSession) {
     const user = JSON.parse(userSession);
     currentUserName.textContent = user.username;
-    createIssueCreatedBy.style.display = 'block';
+    createIssueCreatedBy.style.display = "block";
   } else {
     // User is not logged in, redirect to auth page
-    showWarning('You must be logged in to create issues. Please login first.');
-    window.location.href = '/auth';
+    showWarning("You must be logged in to create issues. Please login first.");
+    window.location.href = "/auth";
     return;
   }
 
@@ -211,18 +211,22 @@ createIssueSubmitButton.addEventListener("click", () => {
       fetchAllIssues(); // Refresh the issue data after creation
     },
     error: function (xhr) {
-      // xhr is een XMLHttpRequest object, hiermee kunnen we de status en response van de server bekijken. 
+      // xhr is een XMLHttpRequest object, hiermee kunnen we de status en response van de server bekijken.
       if (xhr.status === 401) {
-        showError("You must be logged in to create issues. Please login first.");
+        showError(
+          "You must be logged in to create issues. Please login first."
+        );
         // Redirect to auth page
         window.location.href = "/auth";
       } else if (xhr.status === 404) {
         showError("User not found. Please login again.");
         window.location.href = "/auth";
       } else {
-        showError("An error occurred while creating the issue. Please try again.");
+        showError(
+          "An error occurred while creating the issue. Please try again."
+        );
       }
-    }
+    },
   });
 });
 
@@ -382,7 +386,7 @@ function displayPriority(createIssuePriorityData) {
 
 function displayUsers(createIssueUserData) {
   let userList = document.getElementById("createIssueAssignedToOptions");
-  const userOptions = createIssueUserData[0].availableUsers;
+  const userOptions = createIssueUserData;
 
   if (userList.hasChildNodes()) {
     return;
@@ -452,7 +456,11 @@ class Navigation {
     } else if (this.url.includes("/inventory")) {
       this.inventoryNavItem.classList.add("navigationItemActive");
       this.inventoryNavImg.src = "../static/img/icons/inventoryFilled.svg";
-    } else if (this.url.includes("/auth") || this.url.includes("/admin") || this.url.includes("/profile")) {
+    } else if (
+      this.url.includes("/auth") ||
+      this.url.includes("/admin") ||
+      this.url.includes("/profile")
+    ) {
       this.profileNavItem.classList.add("navigationItemActive");
       this.profileNavImg.src = "../static/img/icons/accountFilled.svg";
     } else if (this.url.includes("/")) {
@@ -465,52 +473,56 @@ class Navigation {
 let navigation = new Navigation();
 
 // Custom Notification System
-function showNotification(message, type = 'info', duration = 4000) {
-  const container = document.getElementById('notificationContainer');
+function showNotification(message, type = "info", duration = 4000) {
+  const container = document.getElementById("notificationContainer");
   if (!container) return;
 
   // Create notification element
-  const notification = document.createElement('div');
+  const notification = document.createElement("div");
   notification.className = `notification ${type}`;
 
   // Create notification content
-  const content = document.createElement('div');
-  content.className = 'notification-content';
+  const content = document.createElement("div");
+  content.className = "notification-content";
 
   // Add icon based on type
-  const icon = document.createElement('div');
-  icon.className = 'notification-icon';
-  let iconSymbol = '';
-  switch(type) {
-    case 'success':
-      iconSymbol = '✓';
+  const icon = document.createElement("div");
+  icon.className = "notification-icon";
+  let iconSymbol = "";
+  switch (type) {
+    case "success":
+      iconSymbol = "✓";
       break;
-    case 'error':
-      iconSymbol = '✕';
+    case "error":
+      iconSymbol = "✕";
       break;
-    case 'warning':
-      iconSymbol = '⚠';
+    case "warning":
+      iconSymbol = "⚠";
       break;
     default:
-      iconSymbol = 'ℹ';
+      iconSymbol = "ℹ";
   }
   icon.textContent = iconSymbol;
-  icon.style.fontSize = '1.6rem';
-  icon.style.fontWeight = 'bold';
-  icon.style.color = type === 'success' ? '#28a745' : 
-                   type === 'error' ? '#dc3545' : 
-                   type === 'warning' ? '#ffc107' : 
-                   'var(--secundaryBackgroundColor500)';
+  icon.style.fontSize = "1.6rem";
+  icon.style.fontWeight = "bold";
+  icon.style.color =
+    type === "success"
+      ? "#28a745"
+      : type === "error"
+      ? "#dc3545"
+      : type === "warning"
+      ? "#ffc107"
+      : "var(--secundaryBackgroundColor500)";
 
   // Add message
-  const messageEl = document.createElement('div');
-  messageEl.className = 'notification-message';
+  const messageEl = document.createElement("div");
+  messageEl.className = "notification-message";
   messageEl.textContent = message;
 
   // Add close button
-  const closeBtn = document.createElement('button');
-  closeBtn.className = 'notification-close';
-  closeBtn.innerHTML = '×';
+  const closeBtn = document.createElement("button");
+  closeBtn.className = "notification-close";
+  closeBtn.innerHTML = "×";
   closeBtn.onclick = () => hideNotification(notification);
 
   // Assemble notification
@@ -523,7 +535,7 @@ function showNotification(message, type = 'info', duration = 4000) {
   container.appendChild(notification);
 
   // Show with animation
-  setTimeout(() => notification.classList.add('show'), 100);
+  setTimeout(() => notification.classList.add("show"), 100);
 
   // Auto hide
   setTimeout(() => hideNotification(notification), duration);
@@ -532,7 +544,7 @@ function showNotification(message, type = 'info', duration = 4000) {
 }
 
 function hideNotification(notification) {
-  notification.classList.remove('show');
+  notification.classList.remove("show");
   setTimeout(() => {
     if (notification.parentNode) {
       notification.parentNode.removeChild(notification);
@@ -541,25 +553,25 @@ function hideNotification(notification) {
 }
 
 // Replace all alert calls with custom notifications
-window.alert = function(message) {
-  showNotification(message, 'info');
+window.alert = function (message) {
+  showNotification(message, "info");
 };
 
 // Add custom notification methods to window for easy access
-window.showSuccess = function(message) {
-  showNotification(message, 'success');
+window.showSuccess = function (message) {
+  showNotification(message, "success");
 };
 
-window.showError = function(message) {
-  showNotification(message, 'error');
+window.showError = function (message) {
+  showNotification(message, "error");
 };
 
-window.showWarning = function(message) {
-  showNotification(message, 'warning');
+window.showWarning = function (message) {
+  showNotification(message, "warning");
 };
 
-window.showInfo = function(message) {
-  showNotification(message, 'info');
+window.showInfo = function (message) {
+  showNotification(message, "info");
 };
 
 // Handle profile button click for login/register

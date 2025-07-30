@@ -1,6 +1,7 @@
 $(document).ready(function () {
   fetchConfigData();
   populateFilterOptions();
+  // selectCheckboxes();
 });
 
 let initSort = false;
@@ -36,7 +37,6 @@ function fetchConfigData() {
       } else {
         initSort = false;
         fetchAllIssues();
-        console.log("You're currently not in a room");
       }
     },
     error: function (error) {
@@ -92,7 +92,6 @@ function fetchRoomSpecificIssues() {
 function displayAllIssues(issueData) {
   issueDataGlobal = issueData; // Store globally for sorting and filtering
 
-  console.log(initSort);
   if (!initSort) {
     initSort = true;
     sortIssues("priorityHighToLow");
@@ -130,7 +129,7 @@ function displayAllIssues(issueData) {
     }
 
     priorityText = issue.priority || "No priority";
-    
+
     // Get created by information
     let createdByText = "";
     if (issue.createdBy && issue.createdBy.username) {
@@ -138,7 +137,7 @@ function displayAllIssues(issueData) {
     } else {
       createdByText = "Creator unknown";
     }
-    
+
     // Still has to be styled properly, you can remove this anytime @romyjkk
     issueItem.innerHTML = `
         <article class="textWrapper">
@@ -204,6 +203,13 @@ function openEditModal(issueIndex, issueData) {
   if (assignedUser && configData && configData.users) {
     createIssueSelectedAssignedTo = assignedUser;
     updateAssignedToButtonIcon(assignedUser);
+  }
+
+  // Show who created the issue
+
+  const createdByUser = issueData.createdBy;
+  if (createdByUser && configData && configData.users) {
+    createIssueSelectedCreatedBy = createdByUser;
   }
 
   // Show the modal
@@ -279,6 +285,7 @@ function handleUpdateIssue() {
     description: document.getElementById("issueDescription").value || undefined,
     room: createIssueSelectedRoom || undefined,
     priority: createIssueSelectedPriority || undefined,
+    createdBy: createIssueSelectedCreatedBy || undefined,
     assignedTo: createIssueSelectedAssignedTo || undefined,
     image: createIssueImagePath || undefined,
   };
@@ -450,7 +457,6 @@ function redisplayIssues(sortedIssues) {
 }
 
 function sortIssues(sortType) {
-  console.log(sortType);
   let sortedIssues = [...issueDataGlobal];
   let sortedText = document.getElementById("sortedText");
 
@@ -496,11 +502,14 @@ function sortIssues(sortType) {
 
 // sorting
 
-document.querySelectorAll(`input[type="checkbox"]`).forEach((checkbox) => {
-  checkbox.addEventListener("change", () => {
-    applyAllFilters(); // hoofdfunctie voor filters
+function selectCheckboxes() {
+  console.log("Selecting checkboxes filter");
+  document.querySelectorAll(`input[type="checkbox"]`).forEach((checkbox) => {
+    checkbox.addEventListener("change", () => {
+      applyAllFilters(); // hoofdfunctie voor filters
+    });
   });
-});
+}
 
 function getSelectedFilters() {
   return {
@@ -515,17 +524,19 @@ function getCheckedValues(name) {
   return Array.from(
     document.querySelectorAll(`input[name="${name}"]:checked`)
   ).map((checkbox) => checkbox.value);
-  // .map() -> voor data transformatie
 }
 
+// .map() -> voor data transformatie
 // .sort() -> voor sorteren
 // .filter() -> voor filteren
 // .find() -> 1 item vinden
 // .includes() -> checken of waarde in array zit
 
 function applyAllFilters() {
+  console.log("Applying filters");
   const filters = getSelectedFilters();
-  let filteredIssues = currentIssues.filter((issue) => {
+  console.log("Filtering: ", filters);
+  let filteredIssues = issueDataGlobal.filter((issue) => {
     if (
       filters.priority.length > 0 &&
       !filters.priority.includes(issue.priority)
@@ -546,27 +557,51 @@ function applyAllFilters() {
 
     if (
       filters.createdBy.length > 0 &&
-      !filters.createdBy.includes(issue.createdBy)
+      !filters.createdBy.includes(issue.createdBy.username)
     ) {
+      return false;
     }
 
     return true; // issue voldoet aan alle filters
   });
-
+  console.log(filteredIssues);
   redisplayIssues(filteredIssues);
 }
 
+// clearen na wanneer je op iets klikt
+
+function clearAllFilters() {
+  console.log("Clearing all filters");
+  document
+    .querySelectorAll(`input[type="checkbox"]`)
+    .forEach((cb) => (cb.checked = false));
+  redisplayIssues(issueDataGlobal);
+}
+
+// clearAllFilters();
+
 function populateFilterOptions() {
+  console.log("populating filters");
+  fetch(`/get_priority`)
+    .then((response) => response.json())
+    .then((priorities) => {
+      const availablePriorities = priorities[0].availablePriority;
+      const priorityFilter = document.getElementById("priorityFilterOptions");
+      availablePriorities.forEach((priority) => {
+        const listItem = document.createElement("li");
+        listItem.innerHTML = `<input type="checkbox" name="priority" value="${priority.id}"><p>${priority.name}</p>`;
+        priorityFilter.appendChild(listItem);
+      });
+    });
+
   fetch(`/get_room_config`)
     .then((response) => response.json())
     .then((rooms) => {
       const availableRooms = rooms[0].availableRooms;
-
-      console.log(availableRooms);
       const roomFilter = document.getElementById("roomFilterOptions");
       availableRooms.forEach((room) => {
         const listItem = document.createElement("li");
-        listItem.innerHTML = `<input type="checkbox" name="room" value="${room.room}"><p>${room.room}</p>`;
+        listItem.innerHTML = `<input type="checkbox" name="room" value="${room.id}"><p>${room.room}</p>`;
         roomFilter.appendChild(listItem);
       });
     });
@@ -574,13 +609,16 @@ function populateFilterOptions() {
   fetch("/get_user_config")
     .then((response) => response.json())
     .then((users) => {
-      const availableUsers = users[0].availableUsers;
-      console.log(availableUsers);
       const userFilter = document.getElementById("assignedToFilterOptions");
-      availableUsers.forEach((user) => {
-        const listItem = document.createElement("li");
-        listItem.innerHTML = `<input type="checkbox" name="assignedTo" value="${user.name}"><p>${user.name}</p>`;
-        userFilter.appendChild(listItem);
+      const createdByFilter = document.getElementById("createdByFilterOptions");
+      users.forEach((user) => {
+        const assignedToListItem = document.createElement("li");
+        const createdByListItem = document.createElement("li");
+        assignedToListItem.innerHTML = `<input type="checkbox" name="assignedTo" value="${user.username}"><p>${user.username}</p>`;
+        createdByListItem.innerHTML = `<input type="checkbox" name="createdBy" value="${user.username}"><p>${user.username}</p>`;
+        userFilter.appendChild(assignedToListItem);
+        createdByFilter.appendChild(createdByListItem);
       });
+      selectCheckboxes();
     });
 }

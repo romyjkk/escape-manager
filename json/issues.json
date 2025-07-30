@@ -1,26 +1,42 @@
 [
     {
-        "title": "Medium",
-        "name": "Medium",
-        "room": "theft-at-the-morgue",
-        "priority": "high"
+        "name": "Test 123",
+        "description": "",
+        "room": "cabin-666",
+        "priority": "medium",
+        "image": null,
+        "createdBy": {
+            "id": "user-2",
+            "username": "romyj"
+        },
+        "dateCreated": "2025-07-30T16:04:53.204839",
+        "id": "bbbed04a3b2d47ed86e6f6e82f710ffb"
     },
     {
-        "title": "Hoi1234",
-        "name": "Hoi1234",
+        "name": "Melding 1",
+        "description": "",
         "room": "theft-at-the-morgue",
-        "priority": "high"
+        "priority": "medium",
+        "image": null,
+        "createdBy": {
+            "id": "user-2",
+            "username": "romyj"
+        },
+        "dateCreated": "2025-07-30T16:05:34.501917",
+        "id": "b465ddc0422c49b7a9103d5aa9f609eb"
     },
     {
-        "title": "Hoi12345",
-        "name": "Hoi12345",
-        "room": "theft-at-the-morgue",
-        "priority": "high"
-    },
-    {
-        "title": "Hoi1",
-        "name": "Hoi1",
-        "room": "theft-at-the-morgue",
-        "priority": "low"
+        "name": "Melding 2",
+        "description": "",
+        "room": "space-hunter",
+        "priority": "low",
+        "assignedTo": null,
+        "image": null,
+        "createdBy": {
+            "id": "user-2",
+            "username": "romyj"
+        },
+        "dateCreated": "2025-07-30T16:05:41.419036",
+        "id": "3391835cc39a417f837d59260a5dc8a0"
     }
 ]

@@ -40,8 +40,8 @@
         #filter {
           //   position: relative;
           > ul {
-            // display: flex;
-            // flex-direction: column;
+            display: flex;
+            flex-direction: column;
             gap: 1rem;
             position: absolute;
             background-color: var(--tertiaryBackgroundColor);
@@ -63,6 +63,14 @@
               //   border: 1px solid var(--primaryTextColor);
               //   border-radius: 1rem;
               // }
+              > ul {
+                width: 100%;
+                > li {
+                  display: flex;
+                  flex-direction: row;
+                  align-items: center;
+                }
+              }
             }
           }
         }

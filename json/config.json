@@ -2,35 +2,41 @@
     {
         "availableRooms": [
             {
+                "id": "cabin-666",
                 "room": "Cabin 666",
                 "image": "../static/img/rooms/cabin.webp",
                 "icon": "../static/img/rooms/cabin666.svg"
 
             },
             {
+                "id": "infinicorp-laboratory",
                 "room": "Infinicorp Laboratory",
                 "image": "../static/img/rooms/lab.webp",
                 "icon": "../static/img/rooms/infinicorpLaboratory.svg"
 
             },
             {
+                "id": "theft-at-the-morgue",
                 "room": "Theft at the Morgue",
                 "image": "../static/img/rooms/morgue.webp",
                 "icon": "../static/img/rooms/theftAtTheMorgue.svg"
-
+                
             },
             {
+                "id": "the-wizard-school",
                 "room": "The Wizard School",
                 "image": "../static/img/rooms/wiz.webp",
                 "icon": "../static/img/rooms/wizardSchool.svg"
             },
             {
+                "id": "the-exorcist",
                 "room": "The Exorcist",
                 "image": "../static/img/rooms/exorcist.webp",
                 "icon": "../static/img/rooms/theExorcist.svg"
 
             },
             {
+                "id": "space-hunter",
                 "room": "Space Hunter",
                 "image": "../static/img/rooms/space.webp",
                 "icon": "../static/img/rooms/spaceHunter.svg"
