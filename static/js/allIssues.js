@@ -168,7 +168,6 @@ function openEditModal(issueIndex, issueData) {
   createIssueButton.classList.add("invisible");
 
   currentEditingIndex = issueIndex;
-  console.log(issueIndex, issueData);
   // Populate the form with current data
   document.getElementById("issueName").value =
     issueData.title || issueData.name || "";
@@ -221,7 +220,6 @@ function openEditModal(issueIndex, issueData) {
   // Remove existing click listeners and add new one for updating
   updateButton.removeEventListener("click", originalSubmitHandler);
   updateButton.addEventListener("click", () => {
-    console.log("Update button clicked");
     handleUpdateIssue();
   });
 }
@@ -503,7 +501,6 @@ function sortIssues(sortType) {
 // sorting
 
 function selectCheckboxes() {
-  console.log("Selecting checkboxes filter");
   document.querySelectorAll(`input[type="checkbox"]`).forEach((checkbox) => {
     checkbox.addEventListener("change", () => {
       applyAllFilters(); // hoofdfunctie voor filters
@@ -533,9 +530,7 @@ function getCheckedValues(name) {
 // .includes() -> checken of waarde in array zit
 
 function applyAllFilters() {
-  console.log("Applying filters");
   const filters = getSelectedFilters();
-  console.log("Filtering: ", filters);
   let filteredIssues = issueDataGlobal.filter((issue) => {
     if (
       filters.priority.length > 0 &&
@@ -564,14 +559,12 @@ function applyAllFilters() {
 
     return true; // issue voldoet aan alle filters
   });
-  console.log(filteredIssues);
   redisplayIssues(filteredIssues);
 }
 
 // clearen na wanneer je op iets klikt
 
 function clearAllFilters() {
-  console.log("Clearing all filters");
   document
     .querySelectorAll(`input[type="checkbox"]`)
     .forEach((cb) => (cb.checked = false));
@@ -581,7 +574,6 @@ function clearAllFilters() {
 // clearAllFilters();
 
 function populateFilterOptions() {
-  console.log("populating filters");
   fetch(`/get_priority`)
     .then((response) => response.json())
     .then((priorities) => {
