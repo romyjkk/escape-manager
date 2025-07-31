@@ -32,11 +32,6 @@ $(document).ready(function () {
   // // Dynamically display issues
   // function displayIssues(issueData) {
   //   let issueList = document.getElementById("issueCards");
-  //   let roomTitle = document.getElementById("pageTitle");
-  //   roomTitle.textContent = `${roomIdCheck.replace(/-/g, " ")}`.replace(
-  //     /\b\w/g,
-  //     (l) => l.toUpperCase()
-  //   );
 
   //   issueData.forEach((issue) => {
   //     issue.category.forEach((category) => {

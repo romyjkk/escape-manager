@@ -4,6 +4,17 @@ $(document).ready(function () {
   // selectCheckboxes();
 });
 
+let roomTitle = document.getElementById("pageTitle");
+
+if (roomIdCheck === "") {
+  roomTitle.textContent = "Alle meldingen";
+} else {
+  roomTitle.textContent = `${roomIdCheck.replace(/-/g, " ")}`.replace(
+    /\b\w/g,
+    (l) => l.toUpperCase()
+  );
+}
+
 let initSort = false;
 let currentEditingIndex = null;
 let configData = null;
@@ -88,9 +99,13 @@ function fetchRoomSpecificIssues() {
     },
   });
 }
-
+let originalIssueData = [];
 function displayAllIssues(issueData) {
-  issueDataGlobal = issueData; // Store globally for sorting and filtering
+  if (!originalIssueData.length || issueData !== issueDataGlobal) {
+    originalIssueData = [...issueData]; // Store original unfiltered data
+  }
+
+  issueDataGlobal = issueData; // Current display data
 
   if (!initSort) {
     initSort = true;
@@ -501,9 +516,86 @@ function sortIssues(sortType) {
 // sorting
 
 function selectCheckboxes() {
+  // create badge for room, which you can click away to go to all issues
+  if (roomIdCheck && roomIdCheck !== "") {
+    console.log("You're on a room page");
+    const filterOptionItem = document.createElement("li");
+    filterOptionItem.innerHTML = `
+          <button type="button" id="filter-${roomIdCheck}" class="filterOptionBadge">
+            ${roomIdCheck
+              .replace(/-/g, " ")
+              .replace(/\b\w/g, (l) => l.toUpperCase())}
+            <svg width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M9.05273 3.01758L3.01764 9.05267" stroke="white" stroke-width="0.7" stroke-linecap="round"/>
+                <path d="M9.05273 9.05266L3.01764 3.01756" stroke="white" stroke-width="0.7" stroke-linecap="round"/>
+            </svg>
+          </button>`;
+    document.getElementById("filterOptions").appendChild(filterOptionItem);
+
+    const roomFilterButton = document.getElementById(`filter-${roomIdCheck}`);
+    roomFilterButton.addEventListener("click", () => {
+      console.log("Leaving room page");
+      window.location.href = "/issues/all-issues";
+    });
+  }
+
   document.querySelectorAll(`input[type="checkbox"]`).forEach((checkbox) => {
+    const filterOptionsList = document.getElementById("filterOptions");
+    const displayText = checkbox.nextElementSibling.textContent;
+
     checkbox.addEventListener("change", () => {
-      applyAllFilters(); // hoofdfunctie voor filters
+      console.log(
+        `Checkbox ${checkbox.value} is now ${
+          checkbox.checked ? "checked" : "unchecked"
+        }`
+      );
+
+      if (checkbox.checked) {
+        // CREATE a new filter badge when checked
+        const filterOptionItem = document.createElement("li");
+        filterOptionItem.innerHTML = `
+          <button type="button" id="filter-${checkbox.value}" class="filterOptionBadge">
+            ${displayText}
+            <svg width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M9.05273 3.01758L3.01764 9.05267" stroke="white" stroke-width="0.7" stroke-linecap="round"/>
+                <path d="M9.05273 9.05266L3.01764 3.01756" stroke="white" stroke-width="0.7" stroke-linecap="round"/>
+            </svg>
+          </button>
+        `;
+
+        // Add click handler to the filter badge for removal
+        const filterButton =
+          filterOptionItem.querySelector(".filterOptionBadge");
+        filterButton.addEventListener("click", () => {
+          checkbox.checked = false; // Uncheck the checkbox
+          checkbox.dispatchEvent(new Event("change")); // Trigger change event
+        });
+
+        filterOptionsList.appendChild(filterOptionItem);
+        applyAllFilters();
+      } else {
+        // REMOVE the specific filter badge when unchecked
+        const existingBadge = document.getElementById(
+          `filter-${checkbox.value}`
+        );
+        if (existingBadge && existingBadge.parentElement) {
+          existingBadge.parentElement.remove();
+        }
+
+        // Check if any filters are still active
+        const filters = getSelectedFilters();
+        const hasActiveFilters =
+          filters.priority.length > 0 ||
+          filters.room.length > 0 ||
+          filters.assignedTo.length > 0 ||
+          filters.createdBy.length > 0;
+
+        if (hasActiveFilters) {
+          applyAllFilters();
+        } else {
+          clearAllFilters();
+        }
+      }
     });
   });
 }
@@ -531,7 +623,11 @@ function getCheckedValues(name) {
 
 function applyAllFilters() {
   const filters = getSelectedFilters();
-  let filteredIssues = issueDataGlobal.filter((issue) => {
+
+  // Always filter from the original unfiltered data
+  let filteredIssues = originalIssueData.filter((issue) => {
+    console.log("Filtering issue:", issue);
+
     if (
       filters.priority.length > 0 &&
       !filters.priority.includes(issue.priority)
@@ -557,9 +653,14 @@ function applyAllFilters() {
       return false;
     }
 
-    return true; // issue voldoet aan alle filters
+    return true;
   });
-  redisplayIssues(filteredIssues);
+
+  console.log("Filtered issues:", filteredIssues);
+
+  // Update the current display data and redisplay
+  issueDataGlobal = filteredIssues;
+  displayAllIssues(filteredIssues);
 }
 
 // clearen na wanneer je op iets klikt
@@ -568,7 +669,10 @@ function clearAllFilters() {
   document
     .querySelectorAll(`input[type="checkbox"]`)
     .forEach((cb) => (cb.checked = false));
-  redisplayIssues(issueDataGlobal);
+
+  // Reset to original unfiltered data
+  issueDataGlobal = [...originalIssueData];
+  displayAllIssues(originalIssueData);
 }
 
 // clearAllFilters();
@@ -586,17 +690,19 @@ function populateFilterOptions() {
       });
     });
 
-  fetch(`/get_room_config`)
-    .then((response) => response.json())
-    .then((rooms) => {
-      const availableRooms = rooms[0].availableRooms;
-      const roomFilter = document.getElementById("roomFilterOptions");
-      availableRooms.forEach((room) => {
-        const listItem = document.createElement("li");
-        listItem.innerHTML = `<input type="checkbox" name="room" value="${room.id}"><p>${room.room}</p>`;
-        roomFilter.appendChild(listItem);
+  if (roomIdCheck === "") {
+    fetch(`/get_room_config`)
+      .then((response) => response.json())
+      .then((rooms) => {
+        const availableRooms = rooms[0].availableRooms;
+        const roomFilter = document.getElementById("roomFilterOptions");
+        availableRooms.forEach((room) => {
+          const listItem = document.createElement("li");
+          listItem.innerHTML = `<input type="checkbox" name="room" value="${room.id}"><p>${room.room}</p>`;
+          roomFilter.appendChild(listItem);
+        });
       });
-    });
+  }
 
   fetch("/get_user_config")
     .then((response) => response.json())

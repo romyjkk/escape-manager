@@ -45,3 +45,17 @@ button {
   width: 11rem;
   align-self: center;
 }
+
+.filterOptionBadge {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  background-color: var(--secundaryBackgroundColor600);
+  color: var(--secundaryTextColor);
+  padding: 0.6rem;
+  border-radius: 0.2rem;
+  svg {
+    margin-left: 0.7rem;
+  }
+}

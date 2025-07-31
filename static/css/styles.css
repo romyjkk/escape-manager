@@ -165,6 +165,20 @@ button {
   align-self: center;
 }
 
+.filterOptionBadge {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  background-color: var(--secundaryBackgroundColor600);
+  color: var(--secundaryTextColor);
+  padding: 0.6rem;
+  border-radius: 0.2rem;
+}
+.filterOptionBadge svg {
+  margin-left: 0.7rem;
+}
+
 header {
   position: fixed;
   top: 0;
@@ -357,6 +371,13 @@ footer nav a:last-of-type div {
   flex-direction: row;
   align-items: center;
 }
+#filterPanel #filterAndSort #filterOptions {
+  display: flex;
+  flex-direction: row;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
 #createIssueContainer {
   position: fixed;
   height: 100%;
