@@ -31,10 +31,28 @@
                 <p id="userRole"></p>
             </div>
             <div id="profileActions">
+                <button id="editProfileButton">Edit</button> 
                 <button id="adminPanelButton" class="authButton invisible">Admin Panel</button>
                 <button id="logoutButton" class="authButton">Logout</button>
             </div>
         </div>
+
+        <form id="editProfile" class="invisible">
+            <h2>Profiel bewerken</h2>
+            <input type="text" id="editUsername" placeholder="Gebruikersnaam" required>
+            <p id="editViewUserRole"></p>
+            <div class="imageContainer">
+                <input type="file" accept="image/*" id="userAvatarInput" />
+                <div id="userAvatarPreview">
+                    <img id="userAvatarImg" src="" alt="User avatar">
+                    <button type="button" id="removeAvatarButton">Verwijder</button>
+                </div>
+            </div>
+            <div class="buttonContainer">
+                <button type="button" id="saveEditButton">Opslaan</button>
+                <button type="button" id="cancelEditButton">Annuleren</button>
+            </div>
+        </form>
     </div>
 </main>
 {% endblock %}

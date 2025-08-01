@@ -18,8 +18,6 @@ function displayRoomConfig(roomConfigData) {
   let roomConfigList = document.getElementById("roomList");
   const availableRooms = roomConfigData[0].availableRooms;
   availableRooms.forEach((element) => {
-    console.log(element);
-
     let roomConfigListItem = document.createElement("li");
     let roomConfigSection = document.createElement("a");
     roomConfigSection.href = `issues/${element.room

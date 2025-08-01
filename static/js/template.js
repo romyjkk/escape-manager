@@ -1,3 +1,7 @@
+$(document).ready(function () {
+  fetchNecessaryData();
+});
+
 // variables
 
 const createIssueButton = document.getElementById("createIssue");
@@ -24,12 +28,16 @@ const createIssueSelectPriorityButtonImg = document.querySelector(
 const createIssueAssignedToButton = document.getElementById(
   "createIssueAssignedToButton"
 );
+const createIssueStatusButton = document.getElementById(
+  "addStatusUpdateButton"
+);
 const createIssueAssignedToButtonImg = document.querySelector(
   "#createIssueAssignedToButton img"
 );
 const createIssueSubmitButton = document.getElementById(
   "createIssueSubmitButton"
 );
+
 // global variables
 
 let createIssueName;
@@ -38,6 +46,34 @@ let createIssueSelectedRoom;
 let createIssueSelectedPriority;
 let createIssueSelectedAssignedTo;
 let createIssueImagePath = null;
+let createIssueTimeline;
+
+// fetch data
+
+function fetchNecessaryData() {
+  $.ajax({
+    type: "GET",
+    url: `/get_issues/all`,
+    success: function (data) {
+      console.log("Issue data fetched succesfully: ", data);
+      displayTimelineData(data);
+    },
+    error: function (error) {
+      console.log("Error fetching issue data:", error);
+    },
+  });
+  $.ajax({
+    type: "GET",
+    url: "/get_user_config",
+    success: function (userData) {
+      console.log("User data fetched successfully:", userData);
+      displayTimelineData(userData);
+    },
+    error: function (error) {
+      console.log("Error fetching user data:", error);
+    },
+  });
+}
 
 // create issue popup
 
@@ -49,7 +85,6 @@ createIssueButton.addEventListener("click", () => {
 
   // Check if user is logged in
   const userSession = localStorage.getItem("userSession");
-  const createIssueCreatedBy = document.getElementById("createIssueCreatedBy");
   const currentUserName = document.getElementById("currentUserName");
 
   if (userSession) {
@@ -63,9 +98,28 @@ createIssueButton.addEventListener("click", () => {
     return;
   }
 
+  createIssueAssignedToButtonImg.src = "";
+
   createIssueContainer.classList.add("visible");
   createIssueContainer.classList.remove("invisible");
 });
+
+// timeline data
+
+function displayTimelineData(data, userData) {
+  const createIssueCreatedByName = document.getElementById(
+    "createIssueCreatorName"
+  );
+  const createIssueCreatedBy = document.getElementById("createIssueCreator");
+  const createIssueCreatedByImg = document.getElementById(
+    "createIssueCreator img"
+  );
+  console.log("Hii ", data);
+
+  console.log("This data ", data[0]);
+
+  createIssueCreatedByName.textContent = data[0].username;
+}
 
 createIssueRoomSelectButton.addEventListener("click", () => {
   createIssueFetchRoomConfig();

@@ -17,6 +17,16 @@ button {
   z-index: 1;
 }
 
+#addStatusUpdateButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--buttonColor500);
+  width: 3rem;
+  height: 3rem;
+  border-radius: 3rem;
+}
+
 #createIssueAssignedToButton {
   width: fit-content;
   // display: flex;

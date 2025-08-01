@@ -1,16 +1,19 @@
 [
     {
-        "title": "Test 1234",
-        "name": "Test 1234",
-        "room": "cabin-666",
-        "priority": "medium",
+        "title": "Morgue hoog",
+        "name": "Morgue hoog",
+        "description": "Beschrijving",
+        "room": "theft-at-the-morgue",
+        "priority": "high",
         "createdBy": {
             "id": "user-2",
             "username": "romyj"
         },
+        "assignedTo": "user-1",
+        "image": "../static/img/issues/ad962529eb264eee8b8b1275ba40b11b.jpeg",
         "dateCreated": "2025-07-30T16:04:53.204839",
         "id": "bbbed04a3b2d47ed86e6f6e82f710ffb",
-        "lastModified": "2025-07-31T12:19:12.624772"
+        "lastModified": "2025-08-01T11:45:29.963764"
     },
     {
         "name": "Melding 1",

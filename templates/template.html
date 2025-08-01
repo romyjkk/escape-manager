@@ -74,6 +74,26 @@
                     <ul id="createIssueAssignedToOptions"></ul>
                 </div>
             </div>
+            <div class="timeline">
+                <h3>Tijdlijn</h3>
+                <ul id="timelineItems">
+                    <li id="createIssueCreator">
+                        <img src="">
+                        <p id="createIssueCreatorName"></p>
+                        <div id="issueStatusInfoBadge">
+                            <h4 id="issueStatusInfoTitle">Melding gemaakt</h4>
+                            <p id="issueStatusInfoText">Hier komt de datum</p>
+                        </div>
+                    </li>
+                    <li>
+                        <button type="button" id="addStatusUpdateButton">
+                            <img src="../static/img/icons/plus.svg">
+                        </button>
+                    </li>
+                    <!-- list items containing information about who worked on this issue and what happened when they did -->
+                </ul>
+            </div>
+
             <div id="createIssueCreatedBy" class="createIssueCreatedBy" style="display: none;">
                 <p style="font-size: 1rem; color: var(--secundaryBackgroundColor700); text-align: center; margin: 0.5rem 0;">
                     Creating as: <span id="currentUserName"></span>

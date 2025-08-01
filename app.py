@@ -133,6 +133,9 @@ def create_user():
     
     return jsonify({'success': True, 'message': f'{role.capitalize()} account created successfully'})
 
+# handle update user route
+# @app.route('/update_user/<user_id>')
+
 @app.route('/get_users', methods=['GET'])
 def get_users():
     """Get all users (admin/manager only)"""
@@ -261,6 +264,32 @@ def issues(room_id):
     else:
         return render_template('issuesHome.html')
 
+# upload avatar image
+@app.route('/upload_avatar_image', methods=['POST'])
+def upload_avatar_image():
+    if 'file' not in request.files:
+        return jsonify({'error': 'No file part'}), 400
+
+    file = request.files['file']
+    if file.filename == '':
+        return jsonify({'error': 'No selected file'}), 400
+
+    if file and allowed_file(file.filename):
+        # Generate unique filename
+        file_extension = file.filename.rsplit('.', 1)[1].lower()
+        unique_filename = f"{uuid.uuid4().hex}.{file_extension}"
+        filename = secure_filename(unique_filename)
+        
+        file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        file.save(file_path)
+        
+        # Return the relative path for use in the frontend
+        relative_path = f"../static/img/issues/{filename}"
+        return jsonify({'success': True, 'imagePath': relative_path})
+
+# return jsonify({'error': 'File type not allowed'}), 400
+        
+
 @app.route('/upload_issue_image', methods=['POST'])
 def upload_issue_image():
     if 'file' not in request.files:
@@ -307,6 +336,27 @@ def delete_issue_image():
     except Exception as e:
         return jsonify({'error': f'Error deleting image: {str(e)}'}), 500
 
+# delete avatar image
+@app.route('/delete_avatar_image', methods=['DELETE'])
+def delete_avatar_image():
+    data = request.get_json()
+    image_path = data.get('imagePath')
+
+    if not image_path:
+        return jsonify({'error': 'No image path provided'}), 400
+
+        filename = os.path.basename(image_path)
+        file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+
+    try:
+        if os.path.exists(file_path):
+            os.remove(file_path)
+            return jsonify({'success': True, 'message': 'Image deleted successfully'})
+        else:
+            return jsonify({'error': 'Image file not found'}), 404
+    except Exception as e:
+        return jsonify({'error': f'Error deleting image: {str(e)}'}), 500
+
 @app.route('/create_issue', methods=['POST'])
 def create_issue():
     issuesFile = 'json/issues.json'
@@ -329,7 +379,8 @@ def create_issue():
         if user.get('id') == user_id:
             logged_in_user = {
                 'id': user['id'],
-                'username': user['username']
+                'username': user['username'],
+                'avatar': user['avatar']
             }
             break
     

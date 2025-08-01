@@ -10,5 +10,17 @@
         "username": "romyj",
         "password": "a204831fa97e36b6cc86e1def47413ac5b2c372c2ca051377c6391855bb753d5",
         "role": "host"
+    },
+    {
+        "id": "user-3",
+        "username": "kevin",
+        "password": "85f5e10431f69bc2a14046a13aabaefc660103b6de7a84f75c4b96181d03f0b5",
+        "role": "host"
+    },
+    {
+        "id": "user-4",
+        "username": "peter",
+        "password": "026ad9b14a7453b7488daa0c6acbc258b1506f52c441c7c465474c1a564394ff",
+        "role": "manager"
     }
 ]
