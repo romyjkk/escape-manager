@@ -527,12 +527,16 @@ def get_room_config():
         return "Room config file not found", 404
 
 # inventory page
-@app.route('/inventory')
-#def is a function
-def inventory():
-    return render_template('inventory.html')
-@app.route('/get_inventory')
-#def is a function
+@app.route('/inventory', defaults={'room_id': None})  # default value for room_id
+@app.route('/inventory/<room_id>')
+def inventory(room_id):
+    if (room_id):
+        if room_id == 'all-inventory':
+            return render_template('allInventory.html')
+        return render_template('inventory.html', room_id=room_id)
+    else:
+            return render_template('inventoryHome.html')
+
 def get_inventory():
     try:
         # open the JSON as a temporary fake file. Store the data in a variable
