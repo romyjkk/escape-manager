@@ -13,11 +13,14 @@ app.secret_key = secrets.token_hex(16)
 
 # Configure upload settings
 UPLOAD_FOLDER = 'static/img/issues'
+AVATAR_UPLOAD_FOLDER = 'static/img/users'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+app.config['AVATAR_UPLOAD_FOLDER'] = AVATAR_UPLOAD_FOLDER
 
-# Ensure upload directory exists
+# Ensure upload directories exist
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+os.makedirs(AVATAR_UPLOAD_FOLDER, exist_ok=True)
 
 def allowed_file(filename):
     return '.' in filename and \
@@ -136,6 +139,24 @@ def create_user():
 # handle update user route
 # @app.route('/update_user/<user_id>')
 
+@app.route('/get_users_for_assignment', methods=['GET'])
+def get_users_for_assignment():
+    """Get all users for assignment dropdown (anyone can see this)"""
+    users = load_users()
+    
+    # Return users without passwords, including avatars
+    safe_users = []
+    for user in users:
+        safe_users.append({
+            'id': user['id'],
+            'username': user['username'],
+            'name': user['username'],  # Use username as name for consistency
+            'avatar': user.get('avatar', '../static/img/users/default-avatar.svg'),
+            'role': user['role']
+        })
+    
+    return jsonify(safe_users)
+
 @app.route('/get_users', methods=['GET'])
 def get_users():
     """Get all users (admin/manager only)"""
@@ -218,7 +239,8 @@ def login():
                 user_data = {
                     'id': user['id'],
                     'username': user['username'],
-                    'role': user['role']
+                    'role': user['role'],
+                    'avatar': user.get('avatar', '')
                 }
                 
                 return jsonify({'success': True, 'user': user_data})
@@ -247,9 +269,43 @@ def current_user():
             user_data = {
                 'id': user['id'],
                 'username': user['username'],
-                'role': user['role']
+                'role': user['role'],
+                'avatar': user.get('avatar', '')
             }
             return jsonify({'success': True, 'user': user_data})
+    
+    return jsonify({'success': False, 'message': 'User not found'}), 404
+
+@app.route('/update_profile', methods=['PUT'])
+def update_profile():
+    """Update current user's profile (avatar only)"""
+    if 'user_id' not in session:
+        return jsonify({'success': False, 'message': 'Not logged in'}), 401
+    
+    data = request.get_json()
+    new_username = data.get('username')  # This should be the same as current username
+    new_avatar = data.get('avatar')
+    
+    user_id = session['user_id']
+    users = load_users()
+    
+    # Update user
+    for i, user in enumerate(users):
+        if user.get('id') == user_id:
+            # Keep username the same, only update avatar
+            if new_avatar is not None:  # Allow empty string to remove avatar
+                users[i]['avatar'] = new_avatar
+            
+            save_users(users)
+            
+            updated_user = {
+                'id': users[i]['id'],
+                'username': users[i]['username'],
+                'role': users[i]['role'],
+                'avatar': users[i].get('avatar', '')
+            }
+            
+            return jsonify({'success': True, 'user': updated_user, 'message': 'Profile updated successfully'})
     
     return jsonify({'success': False, 'message': 'User not found'}), 404
 
@@ -267,6 +323,9 @@ def issues(room_id):
 # upload avatar image
 @app.route('/upload_avatar_image', methods=['POST'])
 def upload_avatar_image():
+    if 'user_id' not in session:
+        return jsonify({'error': 'Not logged in'}), 401
+        
     if 'file' not in request.files:
         return jsonify({'error': 'No file part'}), 400
 
@@ -280,14 +339,14 @@ def upload_avatar_image():
         unique_filename = f"{uuid.uuid4().hex}.{file_extension}"
         filename = secure_filename(unique_filename)
         
-        file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        file_path = os.path.join(app.config['AVATAR_UPLOAD_FOLDER'], filename)
         file.save(file_path)
         
         # Return the relative path for use in the frontend
-        relative_path = f"../static/img/issues/{filename}"
+        relative_path = f"../static/img/users/{filename}"
         return jsonify({'success': True, 'imagePath': relative_path})
-
-# return jsonify({'error': 'File type not allowed'}), 400
+    
+    return jsonify({'error': 'File type not allowed'}), 400
         
 
 @app.route('/upload_issue_image', methods=['POST'])
@@ -339,14 +398,17 @@ def delete_issue_image():
 # delete avatar image
 @app.route('/delete_avatar_image', methods=['DELETE'])
 def delete_avatar_image():
+    if 'user_id' not in session:
+        return jsonify({'error': 'Not logged in'}), 401
+        
     data = request.get_json()
     image_path = data.get('imagePath')
 
     if not image_path:
         return jsonify({'error': 'No image path provided'}), 400
 
-        filename = os.path.basename(image_path)
-        file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+    filename = os.path.basename(image_path)
+    file_path = os.path.join(app.config['AVATAR_UPLOAD_FOLDER'], filename)
 
     try:
         if os.path.exists(file_path):
@@ -380,7 +442,7 @@ def create_issue():
             logged_in_user = {
                 'id': user['id'],
                 'username': user['username'],
-                'avatar': user['avatar']
+                'avatar': user.get('avatar', '')
             }
             break
     

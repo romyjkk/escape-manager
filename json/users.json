@@ -3,7 +3,8 @@
         "id": "user-1",
         "username": "admin",
         "password": "8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918",
-        "role": "admin"
+        "role": "admin",
+        "avatar": "../static/img/users/90f700eb6af44054bc3d6bf1774fec4f.gif"
     },
     {
         "id": "user-2",
@@ -12,15 +13,16 @@
         "role": "host"
     },
     {
-        "id": "user-3",
-        "username": "kevin",
-        "password": "85f5e10431f69bc2a14046a13aabaefc660103b6de7a84f75c4b96181d03f0b5",
-        "role": "host"
-    },
-    {
         "id": "user-4",
         "username": "peter",
         "password": "026ad9b14a7453b7488daa0c6acbc258b1506f52c441c7c465474c1a564394ff",
         "role": "manager"
+    },
+    {
+        "id": "user-5",
+        "username": "kevin",
+        "password": "03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4",
+        "role": "host",
+        "avatar": "../static/img/users/65c94f3f6d8c45709e5b8ac2f2fd4ddd.jpg"
     }
 ]

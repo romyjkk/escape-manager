@@ -3,19 +3,34 @@
 document.addEventListener("DOMContentLoaded", function () {
   const loginForm = document.getElementById("loginForm");
   const profileView = document.getElementById("profileView");
+  const editProfileForm = document.getElementById("editProfile");
   const logoutButton = document.getElementById("logoutButton");
   const adminPanelButton = document.getElementById("adminPanelButton");
   const editProfileButton = document.getElementById("editProfileButton");
-  const editProfileView = document.getElementById("editProfile");
-  const avatarImageInput = document.getElementById("userAvatarInput");
-  const avatarImagePreview = document.getElementById("userAvatarPreview");
-  const avatarImage = document.getElementById("avatarImagePreview");
-  const removeAvatarButton = document.getElementById("removeAvatarButton");
-  const saveEditButton = document.getElementById("saveEditsButton");
+  const saveEditButton = document.getElementById("saveEditButton");
   const cancelEditButton = document.getElementById("cancelEditButton");
+  const userAvatarInput = document.getElementById("userAvatarInput");
+  const userAvatarImg = document.getElementById("userAvatarImg");
+  const userAvatarPreview = document.getElementById("userAvatarPreview");
+  const removeAvatarButton = document.getElementById("removeAvatarButton");
 
-  let createAvatarImagePath = null;
-  let currentEditingUserIndex = null;
+  let currentUser = null;
+  let currentAvatarPath = null;
+  let pendingAvatarFile = null;
+  let pendingAvatarPreview = null;
+
+  // Function to handle session expiration
+  function handleSessionExpired() {
+    localStorage.removeItem("userSession");
+    currentUser = null;
+    pendingAvatarFile = null;
+    pendingAvatarPreview = null;
+    showError("Your session has expired. Please log in again.");
+    loginForm.classList.remove("invisible");
+    profileView.classList.add("invisible");
+    editProfileForm.classList.add("invisible");
+  }
+
   // Check if user is already logged in
   checkAuthStatus();
 
@@ -39,6 +54,7 @@ document.addEventListener("DOMContentLoaded", function () {
       .then((data) => {
         if (data.success) {
           showSuccess("Login successful!");
+          currentUser = data.user; // Set currentUser immediately
           localStorage.setItem("userSession", JSON.stringify(data.user));
           showProfileView(data.user);
         } else {
@@ -60,90 +76,126 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Logout
   logoutButton.addEventListener("click", function () {
-    localStorage.removeItem("userSession");
-    profileView.classList.add("invisible");
-    loginForm.classList.remove("invisible");
-    showSuccess("Logged out successfully!");
+    // Clear server-side session
+    fetch("/logout", {
+      method: "POST",
+    })
+      .then(() => {
+        // Clear local storage and show login form
+        localStorage.removeItem("userSession");
+        currentUser = null;
+        profileView.classList.add("invisible");
+        editProfileForm.classList.add("invisible");
+        loginForm.classList.remove("invisible");
+        showSuccess("Logged out successfully!");
+      })
+      .catch((error) => {
+        console.error("Error during logout:", error);
+        // Even if server logout fails, clear local session
+        localStorage.removeItem("userSession");
+        currentUser = null;
+        profileView.classList.add("invisible");
+        editProfileForm.classList.add("invisible");
+        loginForm.classList.remove("invisible");
+        showSuccess("Logged out successfully!");
+      });
   });
+
+  // Edit profile button
+  if (editProfileButton) {
+    editProfileButton.addEventListener("click", function () {
+      showEditProfileForm();
+    });
+  }
+
+  // Save edit button
+  if (saveEditButton) {
+    saveEditButton.addEventListener("click", function () {
+      saveProfileChanges();
+    });
+  }
+
+  // Cancel edit button
+  if (cancelEditButton) {
+    cancelEditButton.addEventListener("click", function () {
+      cancelEdit();
+    });
+  }
+
+  // Avatar upload functionality
+  if (userAvatarInput) {
+    userAvatarInput.addEventListener("change", function (event) {
+      handleAvatarUpload(event);
+    });
+  }
+
+  // Remove avatar button
+  if (removeAvatarButton) {
+    removeAvatarButton.addEventListener("click", function () {
+      removeAvatar();
+    });
+  }
 
   function checkAuthStatus() {
     const userSession = localStorage.getItem("userSession");
     if (userSession) {
       const user = JSON.parse(userSession);
-      // Validate session with server
-      validateSession(user);
+
+      // Verify session with server and get fresh user data
+      fetch("/current_user")
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.success) {
+            // Update localStorage with fresh data from server
+            localStorage.setItem("userSession", JSON.stringify(data.user));
+            currentUser = data.user;
+            showProfileView(data.user);
+          } else {
+            // Session invalid, clear and show login
+            localStorage.removeItem("userSession");
+            currentUser = null;
+            loginForm.classList.remove("invisible");
+            profileView.classList.add("invisible");
+            editProfileForm.classList.add("invisible");
+          }
+        })
+        .catch((error) => {
+          console.error("Error checking auth status:", error);
+          // Fallback to cached user data
+          currentUser = user;
+          showProfileView(user);
+        });
     }
   }
 
-  function validateSession(user) {
-    fetch("/current_user")
-      .then((response) => {
-        if (response.status === 401) {
-          // Session invalid, log out
-          localStorage.removeItem("userSession");
-          profileView.classList.add("invisible");
-          loginForm.classList.remove("invisible");
-          showWarning("Your session has expired. Please login again.");
-          return;
-        }
-        return response.json();
-      })
-      .then((data) => {
-        if (data && data.success) {
-          // Session valid, show profile
-          showProfileView(user);
-        } else {
-          // Session invalid, log out
-          localStorage.removeItem("userSession");
-          profileView.classList.add("invisible");
-          loginForm.classList.remove("invisible");
-          showWarning("Your session has expired. Please login again.");
-        }
-      })
-      .catch((error) => {
-        console.error("Error validating session:", error);
-        // On error, assume session is invalid and log out
-        localStorage.removeItem("userSession");
-        profileView.classList.add("invisible");
-        loginForm.classList.remove("invisible");
-        showError("Unable to validate session. Please login again.");
-      });
-  }
-
   function showProfileView(user) {
+    if (!user) return; // Safety check
+
+    currentUser = user; // Ensure currentUser is set
+
     loginForm.classList.add("invisible");
+    editProfileForm.classList.add("invisible");
     profileView.classList.remove("invisible");
 
     // Populate user info
     document.getElementById("userName").textContent = user.username;
     document.getElementById("userRole").textContent = "Role: " + user.role;
 
-    avatarImageInput.addEventListener("change", handleAvatarImageUpload);
+    // Show avatar if available
+    const userAvatar = document.getElementById("userAvatar");
+    if (user.avatar && userAvatar) {
+      userAvatar.src = user.avatar;
+      userAvatar.style.display = "block";
 
-    removeAvatarButton.addEventListener("click", () => {
-      console.log("Remove avatar");
-      // if there's an uploaded image, delete it from the server
-      if (createAvatarImagePath) {
-        $.ajax({
-          type: "DELETE",
-          url: "/delete_avatar_image",
-          contentType: "application/json",
-          data: JSON.stringify({
-            imagePath: createAvatarImagePath,
-          }),
-          success: function (response) {
-            console.log("Image deleted from server:", response);
-          },
-          error: function (error) {
-            console.log("Error deleting image from server: ", error);
-          },
-        });
-      }
-
-      createAvatarImagePath = null;
-      avatarImageInput.value = "";
-      avatarImagePreview.style.display = "none";
-    });
+      // Handle avatar load errors
+      userAvatar.onerror = function () {
+        console.log("Avatar image failed to load:", user.avatar);
+        this.src = "../static/img/users/default-avatar.svg";
+      };
+    } else if (userAvatar) {
+      userAvatar.src = "../static/img/users/default-avatar.svg";
+      userAvatar.style.display = "block";
+    }
 
     // Show admin panel button for admin and manager roles
     if (user.role === "admin" || user.role === "manager") {
@@ -153,102 +205,217 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
-  editProfileButton.addEventListener("click", () => {
-    profileView.classList.add("invisible");
-    editProfileView.classList.remove("invisible");
-
-    const userSession = localStorage.getItem("userSession");
-    if (!userSession) {
-      showError("No user session found. Please log in.");
+  function showEditProfileForm() {
+    if (!currentUser) {
+      showError("User session not found. Please log in again.");
       return;
     }
 
-    const currentUser = JSON.parse(userSession);
-    handleEditProfile(currentUser);
-  });
+    profileView.classList.add("invisible");
+    editProfileForm.classList.remove("invisible");
 
-  cancelEditButton.addEventListener("click", () => {
-    profileView.classList.remove("invisible");
-    editProfileView.classList.add("invisible");
-  });
-});
+    // Reset pending states
+    pendingAvatarFile = null;
+    pendingAvatarPreview = null;
 
-function handleEditProfile(userData) {
-  const usernameInput = document.getElementById("editUsername");
-  const userRole = document.getElementById("editViewUserRole");
-  console.log("Editing profile");
+    // Populate edit form with current data
+    document.getElementById("editUsername").value = currentUser.username;
+    document.getElementById("editViewUserRole").textContent =
+      "Role: " + currentUser.role;
 
-  // fill in username and role (role = view only)
-  usernameInput.value = userData.username;
-  userRole.textContent = `Role: ${userData.role}`;
+    // Show current avatar
+    currentAvatarPath = currentUser.avatar || "";
+    if (currentUser.avatar) {
+      userAvatarImg.src = currentUser.avatar;
+      userAvatarPreview.style.display = "block";
 
-  // handle avatar image upload
-
-  // handle profile update
-}
-
-// function for handling avatar image upload
-
-function handleAvatarImageUpload(event) {
-  const avatarFile = event.target.files[0];
-  if (avatarFile) {
-    const previousAvatarImagePath = createAvatarImagePath;
-
-    // show preview
-    const fileReader = new FileReader();
-    fileReader.onload = function (e) {
-      avatarImage.src = e.target.result;
-      avatarImagePreview.style.display = "block";
-    };
-    fileReader.readAsDataURL(avatarFile);
-
-    // upload file
-    const avatarFormData = new FormData();
-    avatarFormData.append("file", avatarFile);
-
-    $.ajax({
-      type: "POST",
-      url: "/upload_avatar_image",
-      data: avatarFormData,
-      processData: false,
-      contentType: false,
-      success: function (response) {
-        if (response.success) {
-          // delete previous image if it exists
-          if (previousAvatarImagePath) {
-            $.ajax({
-              type: "DELETE",
-              url: "/delete_avatar_image",
-              contentType: "application/json",
-              data: JSON.stringify({
-                imagePath: previousAvatarImagePath,
-              }),
-              success: function (deleteResponse) {
-                console.log(
-                  "Previous image deleted from server:",
-                  deleteResponse
-                );
-              },
-              error: function (error) {
-                console.log("Error deleting previous image:", error);
-              },
-            });
-          }
-
-          createAvatarImagePath = response.imagePath;
-          console.log("Avatar uploaded successfully:", response.imagePath);
-        } else {
-          showError("Error uploading avatar: " + response.error);
-          avatarImageInput.value = ""; // Reset input
-          avatarImagePreview.style.display = "none";
-        }
-      },
-      error: function (error) {
-        console.log("Error uploading avatar:", error);
-        showError("Error uploading avatar");
-        avatarImageInput.value = ""; // Reset input
-        avatarImagePreview.style.display = "none";
-      },
-    });
+      // Handle avatar load errors
+      userAvatarImg.onerror = function () {
+        console.log("Avatar image failed to load:", currentUser.avatar);
+        this.src = "../static/img/users/default-avatar.svg";
+        currentAvatarPath = "../static/img/users/default-avatar.svg";
+      };
+    } else {
+      userAvatarPreview.style.display = "none";
+    }
   }
-}
+
+  function handleAvatarUpload(event) {
+    const file = event.target.files[0];
+    if (file) {
+      // Store the file for later upload
+      pendingAvatarFile = file;
+
+      // Show preview immediately
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        pendingAvatarPreview = e.target.result;
+        userAvatarImg.src = e.target.result;
+        userAvatarPreview.style.display = "block";
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
+  function removeAvatar() {
+    // Reset form state without deleting from server yet
+    pendingAvatarFile = null;
+    pendingAvatarPreview = null;
+    currentAvatarPath = "";
+    userAvatarInput.value = "";
+    userAvatarPreview.style.display = "none";
+  }
+
+  function saveProfileChanges() {
+    if (!currentUser) {
+      showError("User session not found. Please log in again.");
+      return;
+    }
+
+    // Function to update profile with the avatar path
+    function updateProfile(avatarPath) {
+      // If user removed avatar, delete the old one from server
+      if (!avatarPath && currentUser.avatar) {
+        fetch("/delete_avatar_image", {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            imagePath: currentUser.avatar,
+          }),
+        })
+          .then((response) => {
+            if (!response.ok) {
+              console.log("Failed to delete old avatar:", response.status);
+            }
+            return response.json();
+          })
+          .then((data) => {
+            console.log("Old avatar delete response:", data);
+          })
+          .catch((error) => console.log("Error deleting old avatar:", error));
+      }
+
+      fetch("/update_profile", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          username: currentUser.username, // Keep current username unchanged
+          avatar: avatarPath || "",
+        }),
+      })
+        .then((response) => {
+          if (response.status === 401) {
+            // Session expired
+            localStorage.removeItem("userSession");
+            currentUser = null;
+            showError("Your session has expired. Please log in again.");
+            loginForm.classList.remove("invisible");
+            profileView.classList.add("invisible");
+            editProfileForm.classList.add("invisible");
+            return;
+          }
+          return response.json();
+        })
+        .then((data) => {
+          if (data && data.success) {
+            showSuccess(data.message);
+            // Update local storage and current user
+            currentUser = data.user;
+            localStorage.setItem("userSession", JSON.stringify(data.user));
+
+            // Reset pending states
+            pendingAvatarFile = null;
+            pendingAvatarPreview = null;
+            currentAvatarPath = data.user.avatar || "";
+
+            showProfileView(data.user);
+          } else if (data) {
+            showError("Error updating profile: " + data.message);
+          }
+        })
+        .catch((error) => {
+          console.error("Error:", error);
+          showError("An error occurred while updating profile");
+        });
+    }
+
+    // If there's a pending avatar file, upload it first
+    if (pendingAvatarFile) {
+      const formData = new FormData();
+      formData.append("file", pendingAvatarFile);
+
+      fetch("/upload_avatar_image", {
+        method: "POST",
+        body: formData,
+      })
+        .then((response) => {
+          if (response.status === 401) {
+            handleSessionExpired();
+            return null;
+          }
+          return response.json();
+        })
+        .then((data) => {
+          if (data && data.success) {
+            // Delete previous avatar if it exists and is different
+            if (currentUser.avatar && currentUser.avatar !== data.imagePath) {
+              fetch("/delete_avatar_image", {
+                method: "DELETE",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                  imagePath: currentUser.avatar,
+                }),
+              })
+                .then((response) => {
+                  if (!response.ok) {
+                    console.log(
+                      "Failed to delete previous avatar:",
+                      response.status
+                    );
+                  }
+                  return response.json();
+                })
+                .then((deleteData) => {
+                  console.log("Previous avatar delete response:", deleteData);
+                })
+                .catch((error) =>
+                  console.log("Error deleting previous avatar:", error)
+                );
+            }
+
+            updateProfile(data.imagePath);
+          } else if (data) {
+            showError("Error uploading avatar: " + data.error);
+          }
+        })
+        .catch((error) => {
+          console.log("Error uploading avatar:", error);
+          showError("Error uploading avatar");
+        });
+    } else {
+      // No new avatar file, use current avatar path or remove if user clicked remove
+      updateProfile(currentAvatarPath);
+    }
+  }
+
+  function cancelEdit() {
+    if (!currentUser) {
+      showError("User session not found. Please log in again.");
+      return;
+    }
+
+    // Reset pending states without uploading or deleting anything
+    pendingAvatarFile = null;
+    pendingAvatarPreview = null;
+    currentAvatarPath = currentUser.avatar || "";
+
+    // Reset form and show profile view
+    showProfileView(currentUser);
+  }
+});

@@ -51,56 +51,43 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Logout
   logoutButton.addEventListener("click", function () {
-    localStorage.removeItem("userSession");
-    showSuccess("Logged out successfully!");
-    window.location.href = "/auth";
+    // Clear server-side session
+    fetch("/logout", {
+      method: "POST",
+    })
+      .then(() => {
+        localStorage.removeItem("userSession");
+        showSuccess("Logged out successfully!");
+        window.location.href = "/auth";
+      })
+      .catch((error) => {
+        console.error("Error during logout:", error);
+        // Even if server logout fails, clear local session
+        localStorage.removeItem("userSession");
+        showSuccess("Logged out successfully!");
+        window.location.href = "/auth";
+      });
   });
 
   function loadCurrentUser() {
     const userSession = localStorage.getItem("userSession");
     if (userSession) {
       const user = JSON.parse(userSession);
-      // Validate session with server first
-      validateSession(user);
+      document.getElementById("currentAdminUsername").textContent =
+        user.username;
+      document.getElementById("currentAdminRole").textContent = user.role;
+
+      // Show avatar if available
+      const currentUserAvatar = document.getElementById("currentAdminAvatar");
+      if (currentUserAvatar) {
+        currentUserAvatar.src =
+          user.avatar || "../static/img/users/default-avatar.svg";
+        currentUserAvatar.style.display = "block";
+      }
     } else {
       // Redirect to login if no session
       window.location.href = "/auth";
     }
-  }
-
-  function validateSession(user) {
-    fetch("/current_user")
-      .then((response) => {
-        if (response.status === 401) {
-          // Session invalid, redirect to login
-          localStorage.removeItem("userSession");
-          showWarning("Your session has expired. Please login again.");
-          window.location.href = "/auth";
-          return;
-        }
-        return response.json();
-      })
-      .then((data) => {
-        if (data && data.success) {
-          // Session valid, show user info
-          document.getElementById("currentAdminUsername").textContent =
-            data.user.username;
-          document.getElementById("currentAdminRole").textContent =
-            data.user.role;
-        } else {
-          // Session invalid, redirect to login
-          localStorage.removeItem("userSession");
-          showWarning("Your session has expired. Please login again.");
-          window.location.href = "/auth";
-        }
-      })
-      .catch((error) => {
-        console.error("Error validating session:", error);
-        // On error, assume session is invalid and redirect to login
-        localStorage.removeItem("userSession");
-        showError("Unable to validate session. Please login again.");
-        window.location.href = "/auth";
-      });
   }
 
   function loadUsers() {
@@ -121,7 +108,7 @@ document.addEventListener("DOMContentLoaded", function () {
   function displayUsers(users) {
     usersTableBody.innerHTML = "";
 
-    users.forEach((user, index) => {
+    users.forEach((user) => {
       const row = document.createElement("tr");
 
       // Get current user from session to check permissions
