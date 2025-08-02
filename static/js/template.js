@@ -88,20 +88,44 @@ createIssueButton.addEventListener("click", () => {
   const currentUserName = document.getElementById("currentUserName");
 
   if (userSession) {
-    const user = JSON.parse(userSession);
-    currentUserName.textContent = user.username;
-    createIssueCreatedBy.style.display = "block";
+    // Verify the session is still valid on the server
+    fetch('/current_user')
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          // Update local storage with fresh user data
+          localStorage.setItem('userSession', JSON.stringify(data.user));
+          const user = data.user;
+          currentUserName.textContent = user.username;
+          createIssueCreatedBy.style.display = "block";
+          
+          createIssueAssignedToButtonImg.src = "";
+          
+          // Initialize modal in create mode if the function is available
+          if (typeof window.openCreateModal === 'function') {
+            window.openCreateModal();
+          }
+          
+          createIssueContainer.classList.add("visible");
+          createIssueContainer.classList.remove("invisible");
+        } else {
+          // Session is invalid, clear and redirect
+          localStorage.removeItem('userSession');
+          showWarning("Your session has expired. Please login again.");
+          window.location.href = "/auth";
+        }
+      })
+      .catch(error => {
+        console.error('Error checking session:', error);
+        localStorage.removeItem('userSession');
+        showWarning("You must be logged in to create issues. Please login first.");
+        window.location.href = "/auth";
+      });
   } else {
     // User is not logged in, redirect to auth page
     showWarning("You must be logged in to create issues. Please login first.");
     window.location.href = "/auth";
-    return;
   }
-
-  createIssueAssignedToButtonImg.src = "";
-
-  createIssueContainer.classList.add("visible");
-  createIssueContainer.classList.remove("invisible");
 });
 
 // timeline data
@@ -340,13 +364,13 @@ function createIssueFetchPriorityData() {
 function createIssueFetchUserData() {
   $.ajax({
     type: "GET",
-    url: "/get_user_config",
+    url: "/get_users_for_assignment",
     success: function (createIssueUserData) {
       console.log(createIssueUserData);
       displayUsers(createIssueUserData);
     },
     error: function (error) {
-      console.log("Error fetching priority config data:", error);
+      console.log("Error fetching user data:", error);
     },
   });
 }
@@ -459,7 +483,7 @@ function displayUsers(createIssueUserData) {
 
     createIssueUserButton.addEventListener("click", () => {
       createIssueSelectedAssignedTo = createIssueUserButton.id;
-      createIssueAssignedToButtonImg.src = element.avatar;
+      createIssueAssignedToButtonImg.src = element.avatar || "../static/img/users/default-avatar.svg";
 
       userList.innerHTML = "";
     });
@@ -467,8 +491,8 @@ function displayUsers(createIssueUserData) {
     let createIssueUserName = document.createElement("p");
     let createIssueUserIcon = document.createElement("img");
 
-    createIssueUserName.textContent = element.name;
-    createIssueUserIcon.src = element.avatar;
+    createIssueUserName.textContent = element.name || element.username;
+    createIssueUserIcon.src = element.avatar || "../static/img/users/default-avatar.svg";
 
     createIssueUserButton.appendChild(createIssueUserName);
     createIssueUserButton.appendChild(createIssueUserIcon);

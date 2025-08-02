@@ -27,30 +27,35 @@
         <div id="profileView" class="invisible">
             <h2>Profile</h2>
             <div id="userInfo">
+                <img id="userAvatar" src="" alt="User Avatar" style="display: none;">
                 <h3 id="userName"></h3>
                 <p id="userRole"></p>
             </div>
             <div id="profileActions">
-                <button id="editProfileButton">Edit</button> 
+                <button id="editProfileButton" class="authButton">Edit Avatar</button> 
                 <button id="adminPanelButton" class="authButton invisible">Admin Panel</button>
                 <button id="logoutButton" class="authButton">Logout</button>
             </div>
         </div>
 
-        <form id="editProfile" class="invisible">
-            <h2>Profiel bewerken</h2>
-            <input type="text" id="editUsername" placeholder="Gebruikersnaam" required>
+        <form id="editProfile" class="authForm invisible">
+            <h2>Avatar bewerken</h2>
+            <div class="inputGroup">
+                <label for="editUsername">Gebruikersnaam:</label>
+                <input type="text" id="editUsername" name="editUsername" readonly style="background-color: #f5f5f5; color: #666;">
+            </div>
             <p id="editViewUserRole"></p>
-            <div class="imageContainer">
-                <input type="file" accept="image/*" id="userAvatarInput" />
-                <div id="userAvatarPreview">
-                    <img id="userAvatarImg" src="" alt="User avatar">
-                    <button type="button" id="removeAvatarButton">Verwijder</button>
+            <div class="inputGroup">
+                <label for="userAvatarInput">Avatar:</label>
+                <input type="file" accept="image/*" id="userAvatarInput" name="userAvatarInput" />
+                <div id="userAvatarPreview" style="display: none; margin-top: 1rem;">
+                    <img id="userAvatarImg" src="" alt="User avatar" style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover;">
+                    <button type="button" id="removeAvatarButton" style="display: block; margin-top: 0.5rem; background: #ff6b6b; color: white; border: none; padding: 0.5rem 1rem; border-radius: 0.5rem; cursor: pointer;">Verwijder avatar</button>
                 </div>
             </div>
-            <div class="buttonContainer">
-                <button type="button" id="saveEditButton">Opslaan</button>
-                <button type="button" id="cancelEditButton">Annuleren</button>
+            <div class="inputGroup" style="display: flex; gap: 1rem;">
+                <button type="button" id="saveEditButton" class="authButton">Opslaan</button>
+                <button type="button" id="cancelEditButton" class="authButton" style="background-color: #6c757d;">Annuleren</button>
             </div>
         </form>
     </div>

@@ -2,6 +2,9 @@ $(document).ready(function () {
   fetchConfigData();
   populateFilterOptions();
   // selectCheckboxes();
+  
+  // Initialize modal in create mode
+  setModalMode('create');
 });
 
 let roomTitle = document.getElementById("pageTitle");
@@ -18,6 +21,7 @@ if (roomIdCheck === "") {
 let initSort = false;
 let currentEditingIndex = null;
 let configData = null;
+let userDataGlobal = [];
 let issueDataGlobal = [];
 
 const sortPanel = document.getElementById("sortBy");
@@ -43,6 +47,8 @@ function fetchConfigData() {
     url: "/get_all_config",
     success: function (data) {
       configData = data;
+      // Also fetch user data
+      fetchUserData();
       if (roomIdCheck !== "") {
         fetchRoomSpecificIssues();
       } else {
@@ -57,6 +63,34 @@ function fetchConfigData() {
       fetchAllIssues();
     },
   });
+}
+
+function fetchUserData() {
+  $.ajax({
+    type: "GET",
+    url: "/get_users_for_assignment",
+    success: function (data) {
+      userDataGlobal = data;
+      console.log("User data fetched:", userDataGlobal);
+    },
+    error: function (error) {
+      console.log("Error fetching user data:", error);
+    },
+  });
+}
+
+function getUserAvatar(userIdOrUsername) {
+  if (!userDataGlobal || userDataGlobal.length === 0) {
+    return "../static/img/users/default-avatar.svg";
+  }
+
+  // Try to find by ID first, then by username
+  let user = userDataGlobal.find((u) => u.id === userIdOrUsername);
+  if (!user) {
+    user = userDataGlobal.find((u) => u.username === userIdOrUsername);
+  }
+
+  return user && user.avatar ? user.avatar : "../static/img/users/default-avatar.svg";
 }
 
 function fetchAllIssues() {
@@ -147,10 +181,35 @@ function displayAllIssues(issueData) {
 
     // Get created by information
     let createdByText = "";
+    let createdByAvatar = "";
     if (issue.createdBy && issue.createdBy.username) {
       createdByText = `Created by: ${issue.createdBy.username}`;
+      createdByAvatar = issue.createdBy.avatar || getUserAvatar(issue.createdBy.username);
     } else {
       createdByText = "Creator unknown";
+      createdByAvatar = "../static/img/users/default-avatar.svg";
+    }
+
+    // Get assigned to information
+    let assignedToText = "";
+    let assignedToAvatar = "";
+    const assignedUser = issue.assignedTo || issue.assigned;
+    if (assignedUser) {
+      // If assignedUser is an object, get username; if it's a string (user ID), find the user
+      let assignedUsername;
+      if (typeof assignedUser === 'object') {
+        assignedUsername = assignedUser.username;
+        assignedToAvatar = assignedUser.avatar || getUserAvatar(assignedUsername);
+      } else {
+        // assignedUser is a user ID string, find the actual user
+        const userObj = userDataGlobal.find(u => u.id === assignedUser);
+        assignedUsername = userObj ? userObj.username : assignedUser;
+        assignedToAvatar = getUserAvatar(assignedUser);
+      }
+      assignedToText = `Assigned to: ${assignedUsername}`;
+    } else {
+      assignedToText = "Unassigned";
+      assignedToAvatar = "../static/img/users/default-avatar.svg";
     }
 
     // Still has to be styled properly, you can remove this anytime @romyjkk
@@ -158,7 +217,16 @@ function displayAllIssues(issueData) {
         <article class="textWrapper">
           <h2>${titleText}</h2>
           <p>${descriptionText}</p>
-          <p style="font-size: 1rem; color: var(--secundaryBackgroundColor600); font-style: italic;">${createdByText}</p>
+          <div style="display: flex; align-items: center; gap: 0.5rem; margin-top: 0.5rem;">
+            <img src="${createdByAvatar}" alt="Creator" style="width: 20px; height: 20px; border-radius: 50%; object-fit: cover;">
+            <p style="font-size: 1rem; color: var(--secundaryBackgroundColor600); font-style: italic;">${createdByText}</p>
+          </div>
+          ${assignedUser ? `
+          <div style="display: flex; align-items: center; gap: 0.5rem; margin-top: 0.25rem;">
+            <img src="${assignedToAvatar}" alt="Assigned" style="width: 20px; height: 20px; border-radius: 50%; object-fit: cover;">
+            <p style="font-size: 1rem; color: var(--secundaryBackgroundColor600); font-style: italic;">${assignedToText}</p>
+          </div>
+          ` : `<p style="font-size: 1rem; color: var(--secundaryBackgroundColor600); font-style: italic;">${assignedToText}</p>`}
         </article>
         <article class="imgWrapper">
           <p>${roomText}</p>
@@ -177,12 +245,66 @@ function displayAllIssues(issueData) {
   });
 }
 
+// Function to manage modal mode (create vs edit)
+function setModalMode(mode) {
+  const createButton = document.getElementById("createIssueSubmitButton");
+  const updateButton = document.getElementById("updateIssueButton");
+  
+  if (!createButton || !updateButton) {
+    console.log("Modal buttons not found, retrying...");
+    setTimeout(() => setModalMode(mode), 100);
+    return;
+  }
+  
+  if (mode === 'edit') {
+    // Hide create button, show update button
+    createButton.classList.add("invisible");
+    updateButton.classList.remove("invisible");
+    
+    // Remove any existing listeners and add update listener
+    updateButton.replaceWith(updateButton.cloneNode(true)); // Remove all listeners
+    document.getElementById("updateIssueButton").addEventListener("click", () => {
+      handleUpdateIssue();
+    });
+  } else {
+    // Show create button, hide update button (create mode)
+    createButton.classList.remove("invisible");
+    updateButton.classList.add("invisible");
+    
+    // Remove any existing listeners and add create listener
+    createButton.replaceWith(createButton.cloneNode(true)); // Remove all listeners
+    document.getElementById("createIssueSubmitButton").addEventListener("click", originalSubmitHandler);
+  }
+}
+
+// Global function to open modal in create mode (can be called from template.js)
+window.openCreateModal = function() {
+  setModalMode('create');
+  // Reset form fields
+  document.getElementById("issueName").value = "";
+  document.getElementById("issueDescription").value = "";
+  document.getElementById("issueImageInput").value = "";
+  document.getElementById("imagePreview").style.display = "none";
+  
+  // Reset global variables
+  createIssueSelectedRoom = null;
+  createIssueSelectedPriority = null;
+  createIssueSelectedAssignedTo = null;
+  createIssueImagePath = null;
+  currentEditingIndex = null;
+  
+  // Reset button images
+  document.querySelector("#createIssueRoomSelectButton img").src = "../static/img/plusButton.svg";
+  document.querySelector("#createIssuePrioritySelectButton img").src = "../static/img/priority/priority.svg";
+  document.querySelector("#createIssueAssignedToButton img").src = "../static/img/plusButton.svg";
+};
+
 function openEditModal(issueIndex, issueData) {
-  const createIssueButton = document.getElementById("createIssueSubmitButton");
-
-  createIssueButton.classList.add("invisible");
-
   currentEditingIndex = issueIndex;
+  
+  // Set modal to edit mode
+  setModalMode('edit');
+  
   // Populate the form with current data
   document.getElementById("issueName").value =
     issueData.title || issueData.name || "";
@@ -214,29 +336,20 @@ function openEditModal(issueIndex, issueData) {
   // Set assignedTo if available and update assignedTo button icon
   // Handle both "assignedTo" and "assigned" fields
   const assignedUser = issueData.assignedTo || issueData.assigned;
-  if (assignedUser && configData && configData.users) {
+  if (assignedUser) {
     createIssueSelectedAssignedTo = assignedUser;
     updateAssignedToButtonIcon(assignedUser);
   }
 
   // Show who created the issue
-
   const createdByUser = issueData.createdBy;
-  if (createdByUser && configData && configData.users) {
+  if (createdByUser) {
     createIssueSelectedCreatedBy = createdByUser;
   }
 
   // Show the modal
   document.getElementById("createIssueContainer").classList.add("visible");
   document.getElementById("createIssueContainer").classList.remove("invisible");
-
-  // Update submit button to handle editing
-  let updateButton = document.getElementById("updateIssueButton");
-  // Remove existing click listeners and add new one for updating
-  updateButton.removeEventListener("click", originalSubmitHandler);
-  updateButton.addEventListener("click", () => {
-    handleUpdateIssue();
-  });
 }
 
 function updateRoomButtonIcon(roomId) {
@@ -273,20 +386,25 @@ function updatePriorityButtonIcon(priorityId) {
 }
 
 function updateAssignedToButtonIcon(userIdOrName) {
-  if (!configData || !configData.users) return;
+  if (!userDataGlobal || userDataGlobal.length === 0) return;
 
-  const userConfig = configData.users[0]?.availableUsers;
-  if (userConfig) {
-    // Try to find by ID first, then by name
-    let user = userConfig.find((u) => u.id === userIdOrName);
+  let user;
+  // If it's an object with username property, use that
+  if (typeof userIdOrName === 'object' && userIdOrName.username) {
+    user = userDataGlobal.find((u) => u.username === userIdOrName.username);
+  } else {
+    // Try to find by ID first, then by username
+    user = userDataGlobal.find((u) => u.id === userIdOrName);
     if (!user) {
-      user = userConfig.find((u) => u.name === userIdOrName);
+      user = userDataGlobal.find((u) => u.username === userIdOrName);
     }
+  }
 
-    if (user && user.avatar) {
-      document.querySelector("#createIssueAssignedToButton img").src =
-        user.avatar;
-    }
+  if (user && user.avatar) {
+    document.querySelector("#createIssueAssignedToButton img").src = user.avatar;
+  } else {
+    // Fallback to default avatar
+    document.querySelector("#createIssueAssignedToButton img").src = "../static/img/users/default-avatar.svg";
   }
 }
 
@@ -353,10 +471,8 @@ function resetFormAndModal() {
   document.getElementById("createIssueContainer").classList.remove("visible");
   document.getElementById("createIssueContainer").classList.add("invisible");
 
-  // Reset submit button
-  let updateButton = document.getElementById("updateIssueButton");
-  updateButton.removeEventListener("click", handleUpdateIssue);
-  updateButton.addEventListener("click", originalSubmitHandler);
+  // Reset to create mode
+  setModalMode('create');
 
   currentEditingIndex = null;
 }
@@ -639,11 +755,22 @@ function applyAllFilters() {
       return false;
     }
 
-    if (
-      filters.assignedTo.length > 0 &&
-      !filters.assignedTo.includes(issue.assignedTo)
-    ) {
-      return false;
+    // Handle assignedTo filtering - check both user ID and username
+    if (filters.assignedTo.length > 0) {
+      const assignedUser = issue.assignedTo || issue.assigned;
+      let assignedUsername;
+      
+      if (typeof assignedUser === 'object') {
+        assignedUsername = assignedUser.username;
+      } else if (assignedUser) {
+        // assignedUser is a user ID string, find the actual user
+        const userObj = userDataGlobal.find(u => u.id === assignedUser);
+        assignedUsername = userObj ? userObj.username : assignedUser;
+      }
+      
+      if (!assignedUsername || !filters.assignedTo.includes(assignedUsername)) {
+        return false;
+      }
     }
 
     if (
@@ -704,7 +831,7 @@ function populateFilterOptions() {
       });
   }
 
-  fetch("/get_user_config")
+  fetch("/get_users_for_assignment")
     .then((response) => response.json())
     .then((users) => {
       const userFilter = document.getElementById("assignedToFilterOptions");
