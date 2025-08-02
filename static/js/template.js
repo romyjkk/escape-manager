@@ -55,7 +55,6 @@ function fetchNecessaryData() {
     type: "GET",
     url: `/get_issues/all`,
     success: function (data) {
-      console.log("Issue data fetched succesfully: ", data);
       displayTimelineData(data);
     },
     error: function (error) {
@@ -66,7 +65,6 @@ function fetchNecessaryData() {
     type: "GET",
     url: "/get_user_config",
     success: function (userData) {
-      console.log("User data fetched successfully:", userData);
       displayTimelineData(userData);
     },
     error: function (error) {
@@ -89,36 +87,38 @@ createIssueButton.addEventListener("click", () => {
 
   if (userSession) {
     // Verify the session is still valid on the server
-    fetch('/current_user')
-      .then(response => response.json())
-      .then(data => {
+    fetch("/current_user")
+      .then((response) => response.json())
+      .then((data) => {
         if (data.success) {
           // Update local storage with fresh user data
-          localStorage.setItem('userSession', JSON.stringify(data.user));
+          localStorage.setItem("userSession", JSON.stringify(data.user));
           const user = data.user;
           currentUserName.textContent = user.username;
           createIssueCreatedBy.style.display = "block";
-          
+
           createIssueAssignedToButtonImg.src = "";
-          
+
           // Initialize modal in create mode if the function is available
-          if (typeof window.openCreateModal === 'function') {
+          if (typeof window.openCreateModal === "function") {
             window.openCreateModal();
           }
-          
+
           createIssueContainer.classList.add("visible");
           createIssueContainer.classList.remove("invisible");
         } else {
           // Session is invalid, clear and redirect
-          localStorage.removeItem('userSession');
+          localStorage.removeItem("userSession");
           showWarning("Your session has expired. Please login again.");
           window.location.href = "/auth";
         }
       })
-      .catch(error => {
-        console.error('Error checking session:', error);
-        localStorage.removeItem('userSession');
-        showWarning("You must be logged in to create issues. Please login first.");
+      .catch((error) => {
+        console.error("Error checking session:", error);
+        localStorage.removeItem("userSession");
+        showWarning(
+          "You must be logged in to create issues. Please login first."
+        );
         window.location.href = "/auth";
       });
   } else {
@@ -138,10 +138,6 @@ function displayTimelineData(data, userData) {
   const createIssueCreatedByImg = document.getElementById(
     "createIssueCreator img"
   );
-  console.log("Hii ", data);
-
-  console.log("This data ", data[0]);
-
   createIssueCreatedByName.textContent = data[0].username;
 }
 
@@ -483,7 +479,8 @@ function displayUsers(createIssueUserData) {
 
     createIssueUserButton.addEventListener("click", () => {
       createIssueSelectedAssignedTo = createIssueUserButton.id;
-      createIssueAssignedToButtonImg.src = element.avatar || "../static/img/users/default-avatar.svg";
+      createIssueAssignedToButtonImg.src =
+        element.avatar || "../static/img/users/default-avatar.svg";
 
       userList.innerHTML = "";
     });
@@ -492,7 +489,8 @@ function displayUsers(createIssueUserData) {
     let createIssueUserIcon = document.createElement("img");
 
     createIssueUserName.textContent = element.name || element.username;
-    createIssueUserIcon.src = element.avatar || "../static/img/users/default-avatar.svg";
+    createIssueUserIcon.src =
+      element.avatar || "../static/img/users/default-avatar.svg";
 
     createIssueUserButton.appendChild(createIssueUserName);
     createIssueUserButton.appendChild(createIssueUserIcon);

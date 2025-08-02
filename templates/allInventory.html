@@ -1,7 +1,7 @@
 {% extends "template.html" %}
 
 {% block pageTitle %}
-    Categorie naam
+    Alle inventaris
 {% endblock %}
 
 {% block content %}
@@ -18,8 +18,8 @@
 {% endblock %}
 
 {% block scripts %}
-    <script>
+    <!-- <script>
         const id = "{{ room_id }}"
-    </script>
+    </script> -->
     <script src="{{ url_for('static', filename='js/allInventory.js') }}"></script>
 {% endblock %}

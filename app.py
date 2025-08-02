@@ -599,18 +599,38 @@ def inventory(room_id):
     else:
             return render_template('inventoryHome.html')
 
-def get_inventory():
+@app.route('/get_inventory/<room_id>', methods=['GET'])
+def get_inventory(room_id):
     try:
         # open the JSON as a temporary fake file. Store the data in a variable
         # with is how it works (nog opzoeken)
         with open('json/inventory.json') as file:
             # store all loaded data in inventory variable and print
             inventory = json.load(file)
+            if room_id:
+                print(f"Filtering inventory for room: {room_id}")
+                if room_id == 'all':
+                    print("Fetching all inventory items")
+                else:
+                    inventory = [inventory for inventory in inventory if inventory.get('id') == room_id]
+                print(f"Filtered inventory: {inventory}")
             print (inventory)
             # jsonify the data
             return jsonify(inventory)
     except FileNotFoundError:
         return "Inventory file not found", 404
+
+# get quantity warnings (for inventory)
+
+@app.route('/get_quantity_warnings', methods=['GET'])
+def get_quantity_warnings():
+    try:
+        with open('json/warnings.json') as file:
+            warnings = json.load(file)
+            print(warnings)
+            return jsonify(warnings)
+    except FileNotFoundError:
+        return "Warning file not found", 404
 
 @app.route('/get_user_config')
 def get_user_config():

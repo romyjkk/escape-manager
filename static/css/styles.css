@@ -272,28 +272,33 @@ footer nav a:last-of-type div {
   border-radius: 0 2rem 0 0;
 }
 
-#roomList {
+#roomList,
+#categoryList {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   column-gap: 1.5rem;
   row-gap: 1rem;
 }
-#roomList li {
+#roomList li,
+#categoryList li {
   background-color: var(--tertiaryBackgroundColor);
   height: 10.4rem;
   box-shadow: var(--boxShadowSm);
 }
-#roomList li a {
+#roomList li a,
+#categoryList li a {
   position: relative;
   display: block;
   height: 100%;
 }
-#roomList li a img {
+#roomList li a img,
+#categoryList li a img {
   width: 100%;
   height: 100%;
   border-radius: 0.2rem 0.2rem 0 0;
 }
-#roomList li a div {
+#roomList li a div,
+#categoryList li a div {
   position: absolute;
   bottom: 0;
   width: 100%;
@@ -305,7 +310,8 @@ footer nav a:last-of-type div {
   padding: 0.4rem 0;
   border-radius: 0 0 0.2rem 0.2rem;
 }
-#roomList li a div p {
+#roomList li a div p,
+#categoryList li a div p {
   font-size: 1.2rem;
   font-weight: 400;
   text-align: center;

@@ -6,10 +6,19 @@
 
 {% block content %}
     <main>
-        <h1>Inventory</h1>
+        <ul id="categoryList">
+            <li>
+                <a href="inventory/all-inventory" id="categorySection-all-categories">
+                    <img src="../static/img/placeholder.svg">
+                    <div>
+                        <p>Alle inventaris</p>
+                    </div>
+                </a>
+            </li>
+        </ul>
     </main>
 {% endblock %}
 
 {% block scripts %}
-    <!-- <script src="{{ url_for('static', filename='js/inventoryHome.js') }}"></script> -->
+    <script src="{{ url_for('static', filename='js/inventoryHome.js') }}"></script>
 {% endblock %}

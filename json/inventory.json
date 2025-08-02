@@ -1,39 +1,102 @@
 [
     {
-        "roomName": "cabin_666",
-        "locks": [
+        "id": "cabin-666",
+        "name": "Cabin 666",
+        "image": "../static/img/rooms/cabin.webp",
+        "icon": "../static/img/rooms/cabin666.svg",
+        "items": [
             {
-                "id": "126",
-                "count": 3
+                "id": "folder-1",
+                "type": "folder",
+                "name": "Sloten",
+                "items": [
+                    {
+                        "id": "item-1",
+                        "type": "item",
+                        "name": "973",
+                        "description": "Slot voor het kleine kistje, de kastdeur zit hierin",
+                        "quantity": 2,
+                        "minQuantity": 2,
+                        "maxQuantity": 4,
+                        "image": "../static/img/placeholder.svg"
+                    }
+                ]
             },
             {
-                "id": "684",
-                "count": 2
+                "id": "item-1",
+                "type": "item",
+                "name": "Blikken",
+                "description": "Blikken gebruikt bij de weegschaal puzzel",
+                "quantity": 6,
+                "minQuantity": 6,
+                "maxQuantity": 10,
+                "image": "../static/img/placeholder.svg",
+                "details": "Niet te verwarren met het enkele blik zonder tekst erop"
             },
             {
-                "id": "973",
-                "count": 2
-            },
-            {
-                "id": "312",
-                "count": 2
-            },
-            {
-                "id": "211",
-                "count": 3
-            },
-            {
-                "id": "LOST",
-                "count": 2
-            },
-            {
-                "id": "TIEN",
-                "count": 2
-            },
-            {
-                "id": "NINE",
-                "count": 2
+                "id": "item-2",
+                "type": "item",
+                "name": "Dagboek",
+                "description": "Het dagboek van Melinda",
+                "quantity": 2,
+                "minQuantity": 2,
+                "maxQuantity": 4,
+                "image": "../static/img/placeholder.svg",
+                "details": "Zowel een Nederlands als een Engels dagboek" 
             }
         ]
-    }
+    },
+    {
+        "id": "the-wizard-school",
+        "name": "The Wizard School",
+        "image": "../static/img/rooms/wiz.webp",
+        "icon": "../static/img/rooms/wizardSchool.svg",
+        "items": [
+            {
+                "id": "folder-2",
+                "type": "folder",
+                "name": "Sloten",
+                "items": [
+                    {
+                        "id": "item-3",
+                        "type": "item",
+                        "name": "239",
+                        "description": "Slot voor het vierde schoolbankje, hierin zit de magneet",
+                        "quantity": 2,
+                        "minQuantity": 2,
+                        "maxQuantity": 4,
+                        "image": "../static/img/placeholder.svg"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "the-exorcist",
+        "name": "The Exorcist",
+        "image": "../static/img/rooms/exorcist.webp",
+        "icon": "../static/img/rooms/theExorcist.svg",
+        "items": []
+    },
+    {
+        "id": "theft-at-the-morgue",
+        "name": "Theft at the Morgue",
+        "image": "../static/img/rooms/morgue.webp",
+        "icon": "../static/img/rooms/theftAtTheMorgue.svg",
+        "items": []
+    },
+    {
+        "id": "infinicorp-laboratory",
+        "name": "Infinicorp Laboratory",
+        "image": "../static/img/rooms/lab.webp",
+        "icon": "../static/img/rooms/infinicorpLaboratory.svg",
+        "items": []
+    },
+    {
+        "id": "space-hunter",
+        "name": "Space Hunter",
+        "image": "../static/img/rooms/space.webp",
+        "icon": "../static/img/rooms/spaceHunter.svg",
+        "items": []
+    }    
 ]

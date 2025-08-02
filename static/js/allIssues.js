@@ -2,9 +2,9 @@ $(document).ready(function () {
   fetchConfigData();
   populateFilterOptions();
   // selectCheckboxes();
-  
+
   // Initialize modal in create mode
-  setModalMode('create');
+  setModalMode("create");
 });
 
 let roomTitle = document.getElementById("pageTitle");
@@ -90,7 +90,9 @@ function getUserAvatar(userIdOrUsername) {
     user = userDataGlobal.find((u) => u.username === userIdOrUsername);
   }
 
-  return user && user.avatar ? user.avatar : "../static/img/users/default-avatar.svg";
+  return user && user.avatar
+    ? user.avatar
+    : "../static/img/users/default-avatar.svg";
 }
 
 function fetchAllIssues() {
@@ -134,6 +136,7 @@ function fetchRoomSpecificIssues() {
   });
 }
 let originalIssueData = [];
+
 function displayAllIssues(issueData) {
   if (!originalIssueData.length || issueData !== issueDataGlobal) {
     originalIssueData = [...issueData]; // Store original unfiltered data
@@ -184,7 +187,8 @@ function displayAllIssues(issueData) {
     let createdByAvatar = "";
     if (issue.createdBy && issue.createdBy.username) {
       createdByText = `Created by: ${issue.createdBy.username}`;
-      createdByAvatar = issue.createdBy.avatar || getUserAvatar(issue.createdBy.username);
+      createdByAvatar =
+        issue.createdBy.avatar || getUserAvatar(issue.createdBy.username);
     } else {
       createdByText = "Creator unknown";
       createdByAvatar = "../static/img/users/default-avatar.svg";
@@ -197,12 +201,13 @@ function displayAllIssues(issueData) {
     if (assignedUser) {
       // If assignedUser is an object, get username; if it's a string (user ID), find the user
       let assignedUsername;
-      if (typeof assignedUser === 'object') {
+      if (typeof assignedUser === "object") {
         assignedUsername = assignedUser.username;
-        assignedToAvatar = assignedUser.avatar || getUserAvatar(assignedUsername);
+        assignedToAvatar =
+          assignedUser.avatar || getUserAvatar(assignedUsername);
       } else {
         // assignedUser is a user ID string, find the actual user
-        const userObj = userDataGlobal.find(u => u.id === assignedUser);
+        const userObj = userDataGlobal.find((u) => u.id === assignedUser);
         assignedUsername = userObj ? userObj.username : assignedUser;
         assignedToAvatar = getUserAvatar(assignedUser);
       }
@@ -221,12 +226,16 @@ function displayAllIssues(issueData) {
             <img src="${createdByAvatar}" alt="Creator" style="width: 20px; height: 20px; border-radius: 50%; object-fit: cover;">
             <p style="font-size: 1rem; color: var(--secundaryBackgroundColor600); font-style: italic;">${createdByText}</p>
           </div>
-          ${assignedUser ? `
+          ${
+            assignedUser
+              ? `
           <div style="display: flex; align-items: center; gap: 0.5rem; margin-top: 0.25rem;">
             <img src="${assignedToAvatar}" alt="Assigned" style="width: 20px; height: 20px; border-radius: 50%; object-fit: cover;">
             <p style="font-size: 1rem; color: var(--secundaryBackgroundColor600); font-style: italic;">${assignedToText}</p>
           </div>
-          ` : `<p style="font-size: 1rem; color: var(--secundaryBackgroundColor600); font-style: italic;">${assignedToText}</p>`}
+          `
+              : `<p style="font-size: 1rem; color: var(--secundaryBackgroundColor600); font-style: italic;">${assignedToText}</p>`
+          }
         </article>
         <article class="imgWrapper">
           <p>${roomText}</p>
@@ -249,62 +258,69 @@ function displayAllIssues(issueData) {
 function setModalMode(mode) {
   const createButton = document.getElementById("createIssueSubmitButton");
   const updateButton = document.getElementById("updateIssueButton");
-  
+
   if (!createButton || !updateButton) {
     console.log("Modal buttons not found, retrying...");
     setTimeout(() => setModalMode(mode), 100);
     return;
   }
-  
-  if (mode === 'edit') {
+
+  if (mode === "edit") {
     // Hide create button, show update button
     createButton.classList.add("invisible");
     updateButton.classList.remove("invisible");
-    
+
     // Remove any existing listeners and add update listener
     updateButton.replaceWith(updateButton.cloneNode(true)); // Remove all listeners
-    document.getElementById("updateIssueButton").addEventListener("click", () => {
-      handleUpdateIssue();
-    });
+    document
+      .getElementById("updateIssueButton")
+      .addEventListener("click", () => {
+        handleUpdateIssue();
+      });
   } else {
     // Show create button, hide update button (create mode)
     createButton.classList.remove("invisible");
     updateButton.classList.add("invisible");
-    
+
     // Remove any existing listeners and add create listener
     createButton.replaceWith(createButton.cloneNode(true)); // Remove all listeners
-    document.getElementById("createIssueSubmitButton").addEventListener("click", originalSubmitHandler);
+    document
+      .getElementById("createIssueSubmitButton")
+      .addEventListener("click", originalSubmitHandler);
   }
 }
 
 // Global function to open modal in create mode (can be called from template.js)
-window.openCreateModal = function() {
-  setModalMode('create');
+window.openCreateModal = function () {
+  setModalMode("create");
   // Reset form fields
   document.getElementById("issueName").value = "";
   document.getElementById("issueDescription").value = "";
   document.getElementById("issueImageInput").value = "";
   document.getElementById("imagePreview").style.display = "none";
-  
+
   // Reset global variables
   createIssueSelectedRoom = null;
   createIssueSelectedPriority = null;
   createIssueSelectedAssignedTo = null;
   createIssueImagePath = null;
   currentEditingIndex = null;
-  
+
   // Reset button images
-  document.querySelector("#createIssueRoomSelectButton img").src = "../static/img/plusButton.svg";
-  document.querySelector("#createIssuePrioritySelectButton img").src = "../static/img/priority/priority.svg";
-  document.querySelector("#createIssueAssignedToButton img").src = "../static/img/plusButton.svg";
+  document.querySelector("#createIssueRoomSelectButton img").src =
+    "../static/img/plusButton.svg";
+  document.querySelector("#createIssuePrioritySelectButton img").src =
+    "../static/img/priority/priority.svg";
+  document.querySelector("#createIssueAssignedToButton img").src =
+    "../static/img/plusButton.svg";
 };
 
 function openEditModal(issueIndex, issueData) {
   currentEditingIndex = issueIndex;
-  
+
   // Set modal to edit mode
-  setModalMode('edit');
-  
+  setModalMode("edit");
+
   // Populate the form with current data
   document.getElementById("issueName").value =
     issueData.title || issueData.name || "";
@@ -390,7 +406,7 @@ function updateAssignedToButtonIcon(userIdOrName) {
 
   let user;
   // If it's an object with username property, use that
-  if (typeof userIdOrName === 'object' && userIdOrName.username) {
+  if (typeof userIdOrName === "object" && userIdOrName.username) {
     user = userDataGlobal.find((u) => u.username === userIdOrName.username);
   } else {
     // Try to find by ID first, then by username
@@ -401,10 +417,12 @@ function updateAssignedToButtonIcon(userIdOrName) {
   }
 
   if (user && user.avatar) {
-    document.querySelector("#createIssueAssignedToButton img").src = user.avatar;
+    document.querySelector("#createIssueAssignedToButton img").src =
+      user.avatar;
   } else {
     // Fallback to default avatar
-    document.querySelector("#createIssueAssignedToButton img").src = "../static/img/users/default-avatar.svg";
+    document.querySelector("#createIssueAssignedToButton img").src =
+      "../static/img/users/default-avatar.svg";
   }
 }
 
@@ -472,7 +490,7 @@ function resetFormAndModal() {
   document.getElementById("createIssueContainer").classList.add("invisible");
 
   // Reset to create mode
-  setModalMode('create');
+  setModalMode("create");
 
   currentEditingIndex = null;
 }
@@ -759,15 +777,15 @@ function applyAllFilters() {
     if (filters.assignedTo.length > 0) {
       const assignedUser = issue.assignedTo || issue.assigned;
       let assignedUsername;
-      
-      if (typeof assignedUser === 'object') {
+
+      if (typeof assignedUser === "object") {
         assignedUsername = assignedUser.username;
       } else if (assignedUser) {
         // assignedUser is a user ID string, find the actual user
-        const userObj = userDataGlobal.find(u => u.id === assignedUser);
+        const userObj = userDataGlobal.find((u) => u.id === assignedUser);
         assignedUsername = userObj ? userObj.username : assignedUser;
       }
-      
+
       if (!assignedUsername || !filters.assignedTo.includes(assignedUsername)) {
         return false;
       }

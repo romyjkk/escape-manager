@@ -1,0 +1,11 @@
+[
+    {
+        "id": "red",
+        "image": "../static/img/warnings/red.svg"
+    },
+    {
+        "id": "orange",
+        "image": "../static/img/warnings/orange.svg"
+
+    }
+]
